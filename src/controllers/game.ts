@@ -169,17 +169,40 @@ function handleBets(bet: number): void {
 function handChecker(hand: Array<Card>, folded: boolean): number {
   let handRank: number = 0;
   if (!folded) {
-    const sum: number = hand[0].value + hand[1].value + hand[2].value + hand[3].value;
+    hand.sort((a: Card, b: Card) => {
+      if (a.value > b.value) return 1;
+      if (a.value < b.value) return -1;
+      return 0;
+    });
+    const sum: number =
+      hand[0].value + hand[1].value + hand[2].value + hand[3].value + hand[4].value;
     let flushCheck: boolean = false;
     if (
       hand[0].suit === hand[1].suit &&
       hand[0].suit === hand[2].suit &&
-      hand[0].suit === hand[3].suit
+      hand[0].suit === hand[3].suit &&
+      hand[0].suit === hand[4].suit
     ) {
       flushCheck = true;
     }
     if (sum === 60 && flushCheck === true) {
       handRank = 10; // Royal Flush
+    } else if (
+      hand[4].value - hand[3].value === 1 &&
+      hand[3].value - hand[2].value === 1 &&
+      hand[2].value - hand[1].value === 1 &&
+      hand[1].value - hand[0].value === 1 &&
+      flushCheck
+    ) {
+      handRank = 9; // Straight Flush
+    } else if (
+      hand[4].value - hand[3].value === 9 &&
+      hand[3].value - hand[2].value === 1 &&
+      hand[2].value - hand[1].value === 1 &&
+      hand[1].value - hand[0].value === 1 &&
+      flushCheck
+    ) {
+      handRank = 9; // Straight Flush ace-2-3-4-5
     }
   }
   return handRank;
@@ -188,7 +211,11 @@ function handChecker(hand: Array<Card>, folded: boolean): number {
 /* This should compare all the players hands by rank from 1 to 10 and return a
  * string indicating which player or players have the best hand. This is checked
  * in the "handChecker" function. It's return value is used in the
- * "handleWinnings" function to split the pot accordingly. -Finn
+ * "handleWinnings" function to split the pot accordingly. It also needs to
+ * compare the highest card in the hands the players in the case of a tie. This
+ * is because, for example, a straight consisting of a 6, 7, 8, 9, and 10 will
+ * beat a straight consisting of a 2, 3, 4, 5, and 6. I'm not sure the best way
+ * to go about this. -Finn
  */
 function showdown(): string {
   let bestHand: string = '';
