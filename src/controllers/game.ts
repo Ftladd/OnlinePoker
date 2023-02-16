@@ -1,33 +1,29 @@
 import { DECK } from '../models/cards';
 
-// The players' hands are stored as arrays of Card objects
-const player1Hand: Array<Card> = [];
-const player2Hand: Array<Card> = [];
-const player3Hand: Array<Card> = [];
-const player4Hand: Array<Card> = [];
-
-// This boolean keeps track of whether or not a particular player has folded
-let player1Fold: boolean = false;
-let player2Fold: boolean = false;
-let player3Fold: boolean = false;
-let player4Fold: boolean = false;
-
-/* These variables keep track of each player's balance. This will need to be
- * imported from our SQL database at the beginning of the game and then exported
- * back into the database at the end. -Finn
- */
-let player1Balance: number = 0;
-let player2Balance: number = 0;
-let player3Balance: number = 0;
-let player4Balance: number = 0;
-
-/* These variables keep track of the "rank" of each players' hand. It is used
- * at the end of each round to determine the winner(s)
- */
-let player1HandRank: number = 0;
-let player2HandRank: number = 0;
-let player3HandRank: number = 0;
-let player4HandRank: number = 0;
+const player1: Player = {
+  balance: 0,
+  hand: [],
+  folded: false,
+  handRank: 0,
+};
+const player2: Player = {
+  balance: 0,
+  hand: [],
+  folded: false,
+  handRank: 0,
+};
+const player3: Player = {
+  balance: 0,
+  hand: [],
+  folded: false,
+  handRank: 0,
+};
+const player4: Player = {
+  balance: 0,
+  hand: [],
+  folded: false,
+  handRank: 0,
+};
 
 let activePlayers: number = 4; // The number of players who have not folded
 const ANTE: number = 10; // The minimum bet that is paid at the beginning of each round
@@ -45,24 +41,24 @@ function getRandomInt(min: number, max: number): number {
  * be dealt a card. -Finn
  */
 function dealCards(): void {
-  if (!player1Fold) {
+  if (!player1.folded) {
     const deal = getRandomInt(0, DECK.length - 1);
-    player1Hand.push(DECK[deal]);
+    player1.hand.push(DECK[deal]);
     DECK.splice(deal, 1);
   }
-  if (!player2Fold) {
+  if (!player2.folded) {
     const deal = getRandomInt(0, DECK.length - 1);
-    player2Hand.push(DECK[deal]);
+    player2.hand.push(DECK[deal]);
     DECK.splice(deal, 1);
   }
-  if (!player3Fold) {
+  if (!player3.folded) {
     const deal = getRandomInt(0, DECK.length - 1);
-    player3Hand.push(DECK[deal]);
+    player3.hand.push(DECK[deal]);
     DECK.splice(deal, 1);
   }
-  if (!player4Fold) {
+  if (!player4.folded) {
     const deal = getRandomInt(0, DECK.length - 1);
-    player4Hand.push(DECK[deal]);
+    player4.hand.push(DECK[deal]);
     DECK.splice(deal, 1);
   }
 }
@@ -88,49 +84,49 @@ function placeBets(): number {
   let player4Bet = 0;
 
   // prompt player1 for fold
-  if (!player1Fold) {
+  if (!player1.folded) {
     // prompt player1 for bet
     maxBet = player1Bet;
   }
   // prompt player2 for fold
-  if (!player2Fold) {
+  if (!player2.folded) {
     // prompt player2 for bet
     maxBet = player2Bet;
   }
   // prompt player3 for fold
-  if (!player3Fold) {
+  if (!player3.folded) {
     // prompt player3 for bet
     maxBet = player3Bet;
   }
   // prompt player4 for fold
-  if (!player4Fold) {
+  if (!player4.folded) {
     // prompt player4 for bet
     maxBet = player4Bet;
   }
   while (player1Bet < maxBet || player2Bet < maxBet || player3Bet < maxBet || player4Bet < maxBet) {
     // prompt player1 for fold, if yes -1 from activePlayers
-    if (!player1Fold) {
+    if (!player1.folded) {
       if (player1Bet < maxBet) {
         // prompt player1 for bet
         maxBet = player1Bet;
       }
     }
     // prompt player2 for fold, if yes -1 from activePlayers
-    if (!player2Fold) {
+    if (!player2.folded) {
       if (player2Bet < maxBet) {
         // prompt player2 for bet
         maxBet = player2Bet;
       }
     }
     // prompt player3 for fold, if yes -1 from activePlayers
-    if (!player3Fold) {
+    if (!player3.folded) {
       if (player3Bet < maxBet) {
         // prompt player3 for bet
         maxBet = player3Bet;
       }
     }
     // prompt player4 for fold, if yes -1 from activePlayers
-    if (!player4Fold) {
+    if (!player4.folded) {
       if (player4Bet < maxBet) {
         // prompt player4 for bet
         maxBet = player4Bet;
@@ -146,17 +142,17 @@ function placeBets(): number {
  */
 function handleBets(bet: number): void {
   pot += bet * activePlayers;
-  if (!player1Fold) {
-    player1Balance -= bet;
+  if (!player1.folded) {
+    player1.balance -= bet;
   }
-  if (!player2Fold) {
-    player2Balance -= bet;
+  if (!player2.folded) {
+    player2.balance -= bet;
   }
-  if (!player3Fold) {
-    player3Balance -= bet;
+  if (!player3.folded) {
+    player3.balance -= bet;
   }
-  if (!player4Fold) {
-    player4Balance -= bet;
+  if (!player4.folded) {
+    player4.balance -= bet;
   }
 }
 
@@ -219,32 +215,32 @@ function handChecker(hand: Array<Card>, folded: boolean): number {
  */
 function showdown(): string {
   let bestHand: string = '';
-  player1HandRank = handChecker(player1Hand, player1Fold);
-  player2HandRank = handChecker(player2Hand, player2Fold);
-  player3HandRank = handChecker(player3Hand, player3Fold);
-  player4HandRank = handChecker(player4Hand, player4Fold);
+  player1.handRank = handChecker(player1.hand, player1.folded);
+  player2.handRank = handChecker(player2.hand, player2.folded);
+  player3.handRank = handChecker(player3.hand, player3.folded);
+  player4.handRank = handChecker(player4.hand, player4.folded);
   if (
-    player1HandRank > player2HandRank &&
-    player1HandRank > player3HandRank &&
-    player1HandRank > player4HandRank
+    player1.handRank > player2.handRank &&
+    player1.handRank > player3.handRank &&
+    player1.handRank > player4.handRank
   ) {
     bestHand = 'Player1';
   } else if (
-    player2HandRank > player1HandRank &&
-    player2HandRank > player3HandRank &&
-    player2HandRank > player4HandRank
+    player2.handRank > player1.handRank &&
+    player2.handRank > player3.handRank &&
+    player2.handRank > player4.handRank
   ) {
     bestHand = 'Player2';
   } else if (
-    player3HandRank > player2HandRank &&
-    player3HandRank > player1HandRank &&
-    player3HandRank > player4HandRank
+    player3.handRank > player2.handRank &&
+    player3.handRank > player1.handRank &&
+    player3.handRank > player4.handRank
   ) {
     bestHand = 'Player3';
   } else if (
-    player4HandRank > player2HandRank &&
-    player4HandRank > player3HandRank &&
-    player4HandRank > player1HandRank
+    player4.handRank > player2.handRank &&
+    player4.handRank > player3.handRank &&
+    player4.handRank > player1.handRank
   ) {
     bestHand = 'Player4';
   }
@@ -264,66 +260,66 @@ function handleWinnings(): void {
   if (activePlayers > 1) {
     const winner = showdown();
     if (winner === 'Player1') {
-      player1Balance += pot;
+      player1.balance += pot;
     } else if (winner === 'Player2') {
-      player2Balance += pot;
+      player2.balance += pot;
     } else if (winner === 'Player3') {
-      player3Balance += pot;
+      player3.balance += pot;
     } else if (winner === 'Player4') {
-      player4Balance += pot;
+      player4.balance += pot;
     } else if (winner === 'Player1&2') {
-      player1Balance += pot / 2;
-      player2Balance += pot / 2;
+      player1.balance += pot / 2;
+      player2.balance += pot / 2;
     } else if (winner === 'Player1&3') {
-      player1Balance += pot / 2;
-      player3Balance += pot / 2;
+      player1.balance += pot / 2;
+      player3.balance += pot / 2;
     } else if (winner === 'Player1&4') {
-      player1Balance += pot / 2;
-      player4Balance += pot / 2;
+      player1.balance += pot / 2;
+      player4.balance += pot / 2;
     } else if (winner === 'Player2&3') {
-      player2Balance += pot / 2;
-      player3Balance += pot / 2;
+      player2.balance += pot / 2;
+      player3.balance += pot / 2;
     } else if (winner === 'Player2&4') {
-      player2Balance += pot / 2;
-      player4Balance += pot / 2;
+      player2.balance += pot / 2;
+      player4.balance += pot / 2;
     } else if (winner === 'Player3&4') {
-      player3Balance += pot / 2;
-      player4Balance += pot / 2;
+      player3.balance += pot / 2;
+      player4.balance += pot / 2;
     } else if (winner === 'Player1&2&3') {
-      player1Balance += pot / 3;
-      player2Balance += pot / 3;
-      player3Balance += pot / 3;
+      player1.balance += pot / 3;
+      player2.balance += pot / 3;
+      player3.balance += pot / 3;
     } else if (winner === 'Player1&2&4') {
-      player1Balance += pot / 3;
-      player2Balance += pot / 3;
-      player4Balance += pot / 3;
+      player1.balance += pot / 3;
+      player2.balance += pot / 3;
+      player4.balance += pot / 3;
     } else if (winner === 'Player 1&3&4') {
-      player1Balance += pot / 3;
-      player3Balance += pot / 3;
-      player4Balance += pot / 3;
+      player1.balance += pot / 3;
+      player3.balance += pot / 3;
+      player4.balance += pot / 3;
     } else if (winner === 'Player2&3&4') {
-      player2Balance += pot / 3;
-      player3Balance += pot / 3;
-      player4Balance += pot / 3;
+      player2.balance += pot / 3;
+      player3.balance += pot / 3;
+      player4.balance += pot / 3;
     } else {
-      player1Balance += pot / 4;
-      player2Balance += pot / 4;
-      player3Balance += pot / 4;
-      player4Balance += pot / 4;
+      player1.balance += pot / 4;
+      player2.balance += pot / 4;
+      player3.balance += pot / 4;
+      player4.balance += pot / 4;
     }
-  } else if (!player1Fold) {
-    player1Balance += pot;
-  } else if (!player2Fold) {
-    player2Balance += pot;
-  } else if (!player3Fold) {
-    player3Balance += pot;
-  } else if (!player4Fold) {
-    player4Balance += pot;
+  } else if (!player1.folded) {
+    player1.balance += pot;
+  } else if (!player2.folded) {
+    player2.balance += pot;
+  } else if (!player3.folded) {
+    player3.balance += pot;
+  } else if (!player4.folded) {
+    player4.balance += pot;
   } else {
-    player1Balance += pot / 4;
-    player2Balance += pot / 4;
-    player3Balance += pot / 4;
-    player4Balance += pot / 4;
+    player1.balance += pot / 4;
+    player2.balance += pot / 4;
+    player3.balance += pot / 4;
+    player4.balance += pot / 4;
   }
 }
 
@@ -358,10 +354,10 @@ function playRound(): void {
   }
   handleWinnings();
   activePlayers = 4;
-  player1Fold = false;
-  player2Fold = false;
-  player3Fold = false;
-  player4Fold = false;
+  player1.folded = false;
+  player2.folded = false;
+  player3.folded = false;
+  player4.folded = false;
 }
 
 function resetDeck(
@@ -380,7 +376,7 @@ function resetDeck(
 function playMatch(): void {
   for (let i = 0; i < 3; i += 1) {
     playRound();
-    resetDeck(player1Hand, player2Hand, player3Hand, player4Hand);
+    resetDeck(player1.hand, player2.hand, player3.hand, player4.hand);
   }
 }
 
