@@ -8,3 +8,8 @@ type Player = {
   folded: boolean;
   handRank: number;
 };
+type DatabaseConstraintError = {
+  type: 'unique' | 'check' | 'not null' | 'foreign key' | 'unknown';
+  columnName?: string;
+  message?: string;
+};
