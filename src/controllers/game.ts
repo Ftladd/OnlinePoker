@@ -382,9 +382,7 @@ function playMatch(): void {
 
 export { playMatch };
 
-
-
-//function to check the hand rank
+// function to check the hand rank
 function checkHandRank(hand: Card[]): number {
   // Initialize an object to store the count of each rank
   const ranks: Ranks = {};
@@ -507,7 +505,6 @@ function checkHandRank(hand: Card[]): number {
   return 1; // High card
 }
 
-
 //
 function determineWinner(players: Player[]): number {
   // Initialize a variable to keep track of the highest hand rank found so far
@@ -558,5 +555,4 @@ function determineWinner(players: Player[]): number {
   return winnerIndex;
 }
 
-
-export{determineWinner}
+export { determineWinner };
