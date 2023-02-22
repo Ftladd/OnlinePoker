@@ -381,3 +381,182 @@ function playMatch(): void {
 }
 
 export { playMatch };
+
+
+
+//function to check the hand rank
+function checkHandRank(hand: Card[]): number {
+  // Initialize an object to store the count of each rank
+  const ranks: Ranks = {};
+  // Initialize boolean flags for flush and straight
+  let flush = true;
+  let straight = false;
+
+  // Loop through the cards in the hand
+  for (let i = 0; i < hand.length; i += 1) {
+    // Get the rank and suit of the current card
+    const { rank } = hand[i];
+    const { suit } = hand[i];
+
+    // Update the rank count for the current rank
+    if (ranks[rank]) {
+      ranks[rank] += 1;
+    } else {
+      ranks[rank] = 1;
+    }
+
+    // Check if all the cards have the same suit
+    if (i < hand.length - 1) {
+      if (suit !== hand[i + 1].suit) {
+        flush = false;
+      }
+    }
+  }
+
+  // Get an array of the rank counts
+  const rankCounts = [];
+
+  // Push the count of each rank into rankCounts array
+  for (const rank in ranks) {
+    rankCounts.push(ranks[rank]);
+  }
+
+  // Check for four of a kind, full house, two pair, and pair
+  let hasFourOfAKind = false;
+  let hasThreeOfAKind = false;
+  let hasTwoPair = false;
+  let hasPair = false;
+
+  for (let i = 0; i < rankCounts.length; i += 1) {
+    // Check for four of a kind. If four of a kind found,
+    // there's no need to check the remaining elements in rankCounts.
+    if (rankCounts[i] === 4) {
+      hasFourOfAKind = true;
+      break;
+    }
+    // Check for three of a kind
+    if (rankCounts[i] === 3) {
+      hasThreeOfAKind = true;
+    }
+    // Check for pairs
+    if (rankCounts[i] === 2) {
+      if (hasPair) {
+        hasTwoPair = true;
+      }
+      hasPair = true;
+    }
+  }
+
+  // Check for straight
+  const sortedRanks = [];
+  // Push each rank into the sortedRanks array
+  for (const rank in ranks) {
+    sortedRanks.push(rank);
+  }
+  // Sort the array of ranks numerically in ascending order by converting the
+  // values from strings to numbers using the Number() function.
+  sortedRanks.sort((a, b) => Number(a) - Number(b));
+
+  if (sortedRanks.length === 5) {
+    // Check for a straight (five sequential ranks)
+    if (Number(sortedRanks[4]) - Number(sortedRanks[0]) === 4) {
+      straight = true;
+    }
+    // Check for a special case of a straight (A-5 straight)
+  } else if (sortedRanks.length === 4 && sortedRanks[0] === '2' && sortedRanks[3] === '5') {
+    straight = true;
+  }
+
+  // Assign rank based on the highest combination
+  if (flush && straight && sortedRanks[4] === 'A') {
+    return 10; // Royal flush
+  }
+
+  if (flush && straight) {
+    return 9; // Straight flush
+  }
+
+  if (hasFourOfAKind) {
+    return 8; // Four of a kind
+  }
+
+  if (hasThreeOfAKind && hasPair) {
+    return 7; // Full house
+  }
+
+  if (flush) {
+    return 6; // Flush
+  }
+
+  if (straight) {
+    return 5; // Straight
+  }
+
+  if (hasThreeOfAKind) {
+    return 4; // Three of a kind
+  }
+
+  if (hasTwoPair) {
+    return 3; // Two pair
+  }
+
+  if (hasPair) {
+    return 2; // Pair
+  }
+
+  return 1; // High card
+}
+
+
+//
+function determineWinner(players: Player[]): number {
+  // Initialize a variable to keep track of the highest hand rank found so far
+  let maxRank = 0;
+  // Initialize a variable to keep track of the index of the player with the highest hand rank
+  let winnerIndex = -1;
+
+  // Loop through each player
+  for (let i = 0; i < players.length; i += 1) {
+    const rank = checkHandRank(players[i].hand);
+
+    // If the current player's rank is higher than the current max rank, update the max rank and winner index
+    if (rank > maxRank) {
+      maxRank = rank;
+      winnerIndex = i;
+    }
+    // If there is a tie, compare the next highest ranking card in each hand
+    else if (rank === maxRank) {
+      let j = 0;
+      let winnerFound = false;
+      while (!winnerFound) {
+        const player1Card = players[winnerIndex].hand[j];
+        const player2Card = players[i].hand[j];
+
+        // If player 2 has a higher card, update the winner index and break out of the loop
+        if (player2Card.value > player1Card.value) {
+          winnerIndex = i;
+          winnerFound = true;
+        }
+        // If player 1 has a higher card, break out of the loop
+        else if (player1Card.value > player2Card.value) {
+          winnerFound = true;
+        }
+        // If the players have the same highest card, compare the next highest card
+        else {
+          j += 1;
+        }
+
+        // If both players have the same cards, it's a tie
+        if (j >= players[winnerIndex].hand.length || j >= players[i].hand.length) {
+          winnerIndex = -1;
+          winnerFound = true;
+        }
+      }
+    }
+  }
+
+  return winnerIndex;
+}
+
+
+export{determineWinner}
