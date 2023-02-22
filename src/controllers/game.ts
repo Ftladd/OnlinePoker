@@ -42,22 +42,22 @@ function getRandomInt(min: number, max: number): number {
  */
 function dealCards(): void {
   if (!player1.folded) {
-    const deal = getRandomInt(0, DECK.length - 1);
+    const deal = getRandomInt(0, DECK.length);
     player1.hand.push(DECK[deal]);
     DECK.splice(deal, 1);
   }
   if (!player2.folded) {
-    const deal = getRandomInt(0, DECK.length - 1);
+    const deal = getRandomInt(0, DECK.length);
     player2.hand.push(DECK[deal]);
     DECK.splice(deal, 1);
   }
   if (!player3.folded) {
-    const deal = getRandomInt(0, DECK.length - 1);
+    const deal = getRandomInt(0, DECK.length);
     player3.hand.push(DECK[deal]);
     DECK.splice(deal, 1);
   }
   if (!player4.folded) {
-    const deal = getRandomInt(0, DECK.length - 1);
+    const deal = getRandomInt(0, DECK.length);
     player4.hand.push(DECK[deal]);
     DECK.splice(deal, 1);
   }
