@@ -25,6 +25,8 @@ const player4: Player = {
   handRank: 0,
 };
 
+const players: Array<Player> = [player1, player2, player3, player4];
+
 let activePlayers: number = 4; // The number of players who have not folded
 const ANTE: number = 10; // The minimum bet that is paid at the beginning of each round
 let pot: number = 0; // The betting pool
@@ -156,232 +158,6 @@ function handleBets(bet: number): void {
   }
 }
 
-/* This should determine the value of each player's hand and rank it from 1 to
- * 10, with 10 being the best. If they folded it should return 0. This is used
- * in the "showdown" function to determine the winners. Takes two parameters,
- * the "hand" array of the player, and the boolean checking whether or not they
- * folded. -Finn
- */
-function handChecker(hand: Array<Card>, folded: boolean): number {
-  let handRank: number = 0;
-  if (!folded) {
-    hand.sort((a: Card, b: Card) => {
-      if (a.value > b.value) return 1;
-      if (a.value < b.value) return -1;
-      return 0;
-    });
-    const sum: number =
-      hand[0].value + hand[1].value + hand[2].value + hand[3].value + hand[4].value;
-    let flushCheck: boolean = false;
-    if (
-      hand[0].suit === hand[1].suit &&
-      hand[0].suit === hand[2].suit &&
-      hand[0].suit === hand[3].suit &&
-      hand[0].suit === hand[4].suit
-    ) {
-      flushCheck = true;
-    }
-    if (sum === 60 && flushCheck === true) {
-      handRank = 10; // Royal Flush
-    } else if (
-      hand[4].value - hand[3].value === 1 &&
-      hand[3].value - hand[2].value === 1 &&
-      hand[2].value - hand[1].value === 1 &&
-      hand[1].value - hand[0].value === 1 &&
-      flushCheck
-    ) {
-      handRank = 9; // Straight Flush
-    } else if (
-      hand[4].value - hand[3].value === 9 &&
-      hand[3].value - hand[2].value === 1 &&
-      hand[2].value - hand[1].value === 1 &&
-      hand[1].value - hand[0].value === 1 &&
-      flushCheck
-    ) {
-      handRank = 9; // Straight Flush ace-2-3-4-5
-    }
-  }
-  return handRank;
-}
-
-/* This should compare all the players hands by rank from 1 to 10 and return a
- * string indicating which player or players have the best hand. This is checked
- * in the "handChecker" function. It's return value is used in the
- * "handleWinnings" function to split the pot accordingly. It also needs to
- * compare the highest card in the hands the players in the case of a tie. This
- * is because, for example, a straight consisting of a 6, 7, 8, 9, and 10 will
- * beat a straight consisting of a 2, 3, 4, 5, and 6. I'm not sure the best way
- * to go about this. -Finn
- */
-function showdown(): string {
-  let bestHand: string = '';
-  player1.handRank = handChecker(player1.hand, player1.folded);
-  player2.handRank = handChecker(player2.hand, player2.folded);
-  player3.handRank = handChecker(player3.hand, player3.folded);
-  player4.handRank = handChecker(player4.hand, player4.folded);
-  if (
-    player1.handRank > player2.handRank &&
-    player1.handRank > player3.handRank &&
-    player1.handRank > player4.handRank
-  ) {
-    bestHand = 'Player1';
-  } else if (
-    player2.handRank > player1.handRank &&
-    player2.handRank > player3.handRank &&
-    player2.handRank > player4.handRank
-  ) {
-    bestHand = 'Player2';
-  } else if (
-    player3.handRank > player2.handRank &&
-    player3.handRank > player1.handRank &&
-    player3.handRank > player4.handRank
-  ) {
-    bestHand = 'Player3';
-  } else if (
-    player4.handRank > player2.handRank &&
-    player4.handRank > player3.handRank &&
-    player4.handRank > player1.handRank
-  ) {
-    bestHand = 'Player4';
-  }
-  return bestHand;
-}
-
-/* This function checks the string that is returned from the "showdown" function
- * and uses it to determine how to split the pot. Currently it does this by
- * checking if there is more than 1 active player. If there isn't then it just
- * gives the pot to whoever hasn't folded. Otherwise it checks for every
- * possible combination of winners. The final else statement exists because I'm
- * pretty sure with the current game logic it is possible for all 4 players to
- * fold. The entire function seems very inefficient to me but I haven't been
- * able to think of a better way to do it. -Finn
- */
-function handleWinnings(): void {
-  if (activePlayers > 1) {
-    const winner = showdown();
-    if (winner === 'Player1') {
-      player1.balance += pot;
-    } else if (winner === 'Player2') {
-      player2.balance += pot;
-    } else if (winner === 'Player3') {
-      player3.balance += pot;
-    } else if (winner === 'Player4') {
-      player4.balance += pot;
-    } else if (winner === 'Player1&2') {
-      player1.balance += pot / 2;
-      player2.balance += pot / 2;
-    } else if (winner === 'Player1&3') {
-      player1.balance += pot / 2;
-      player3.balance += pot / 2;
-    } else if (winner === 'Player1&4') {
-      player1.balance += pot / 2;
-      player4.balance += pot / 2;
-    } else if (winner === 'Player2&3') {
-      player2.balance += pot / 2;
-      player3.balance += pot / 2;
-    } else if (winner === 'Player2&4') {
-      player2.balance += pot / 2;
-      player4.balance += pot / 2;
-    } else if (winner === 'Player3&4') {
-      player3.balance += pot / 2;
-      player4.balance += pot / 2;
-    } else if (winner === 'Player1&2&3') {
-      player1.balance += pot / 3;
-      player2.balance += pot / 3;
-      player3.balance += pot / 3;
-    } else if (winner === 'Player1&2&4') {
-      player1.balance += pot / 3;
-      player2.balance += pot / 3;
-      player4.balance += pot / 3;
-    } else if (winner === 'Player 1&3&4') {
-      player1.balance += pot / 3;
-      player3.balance += pot / 3;
-      player4.balance += pot / 3;
-    } else if (winner === 'Player2&3&4') {
-      player2.balance += pot / 3;
-      player3.balance += pot / 3;
-      player4.balance += pot / 3;
-    } else {
-      player1.balance += pot / 4;
-      player2.balance += pot / 4;
-      player3.balance += pot / 4;
-      player4.balance += pot / 4;
-    }
-  } else if (!player1.folded) {
-    player1.balance += pot;
-  } else if (!player2.folded) {
-    player2.balance += pot;
-  } else if (!player3.folded) {
-    player3.balance += pot;
-  } else if (!player4.folded) {
-    player4.balance += pot;
-  } else {
-    player1.balance += pot / 4;
-    player2.balance += pot / 4;
-    player3.balance += pot / 4;
-    player4.balance += pot / 4;
-  }
-}
-
-/* This function handles each individual round in a match. At the end of the
- * round it will reset the player's "folded" status to false and the active
- * players to 4 in preparation for the next round. -Finn
- */
-function playRound(): void {
-  handleBets(ANTE);
-  dealCards();
-  let bet = placeBets();
-  handleBets(bet);
-  if (activePlayers > 1) {
-    dealCards();
-    bet = placeBets();
-    handleBets(bet);
-  }
-  if (activePlayers > 1) {
-    dealCards();
-    bet = placeBets();
-    handleBets(bet);
-  }
-  if (activePlayers > 1) {
-    dealCards();
-    bet = placeBets();
-    handleBets(bet);
-  }
-  if (activePlayers > 1) {
-    dealCards();
-    bet = placeBets();
-    handleBets(bet);
-  }
-  handleWinnings();
-  activePlayers = 4;
-  player1.folded = false;
-  player2.folded = false;
-  player3.folded = false;
-  player4.folded = false;
-}
-
-function resetDeck(
-  hand1: Array<Card>,
-  hand2: Array<Card>,
-  hand3: Array<Card>,
-  hand4: Array<Card>
-): void {
-  /* This needs to push the cards from each players hand back into the DECK
-  array. Since we're just pulling them out in at random it doesn't matter what
-  order the DECK is in at the start of each round -Finn
-  */
-}
-
-// This function will handle the entirety of a 3-round match
-function playMatch(): void {
-  for (let i = 0; i < 3; i += 1) {
-    playRound();
-    resetDeck(player1.hand, player2.hand, player3.hand, player4.hand);
-  }
-}
-
-export { playMatch };
-
 // function to check the hand rank
 function checkHandRank(hand: Card[]): number {
   // Initialize an object to store the count of each rank
@@ -505,16 +281,15 @@ function checkHandRank(hand: Card[]): number {
   return 1; // High card
 }
 
-//
-function determineWinner(players: Player[]): number {
+function determineWinner(player_array: Array<Player>): number {
   // Initialize a variable to keep track of the highest hand rank found so far
   let maxRank = 0;
   // Initialize a variable to keep track of the index of the player with the highest hand rank
   let winnerIndex = -1;
 
   // Loop through each player
-  for (let i = 0; i < players.length; i += 1) {
-    const rank = checkHandRank(players[i].hand);
+  for (let i = 0; i < player_array.length; i += 1) {
+    const rank = checkHandRank(player_array[i].hand);
 
     // If the current player's rank is higher than the current max rank, update the max rank and winner index
     if (rank > maxRank) {
@@ -526,8 +301,8 @@ function determineWinner(players: Player[]): number {
       let j = 0;
       let winnerFound = false;
       while (!winnerFound) {
-        const player1Card = players[winnerIndex].hand[j];
-        const player2Card = players[i].hand[j];
+        const player1Card = player_array[winnerIndex].hand[j];
+        const player2Card = player_array[i].hand[j];
 
         // If player 2 has a higher card, update the winner index and break out of the loop
         if (player2Card.value > player1Card.value) {
@@ -544,7 +319,7 @@ function determineWinner(players: Player[]): number {
         }
 
         // If both players have the same cards, it's a tie
-        if (j >= players[winnerIndex].hand.length || j >= players[i].hand.length) {
+        if (j >= player_array[winnerIndex].hand.length || j >= player_array[i].hand.length) {
           winnerIndex = -1;
           winnerFound = true;
         }
@@ -555,4 +330,162 @@ function determineWinner(players: Player[]): number {
   return winnerIndex;
 }
 
-export { determineWinner };
+/* This should compare all the players hands by rank from 1 to 10 and return a
+ * string indicating which player or players have the best hand. This is checked
+ * in the "handChecker" function. It's return value is used in the
+ * "handleWinnings" function to split the pot accordingly. It also needs to
+ * compare the highest card in the hands the players in the case of a tie. This
+ * is because, for example, a straight consisting of a 6, 7, 8, 9, and 10 will
+ * beat a straight consisting of a 2, 3, 4, 5, and 6. I'm not sure the best way
+ * to go about this. -Finn
+ */
+function showdown(): number {
+  if (!player1.folded) {
+    player1.handRank = checkHandRank(player1.hand);
+  }
+  if (!player2.folded) {
+    player2.handRank = checkHandRank(player2.hand);
+  }
+  if (!player3.folded) {
+    player3.handRank = checkHandRank(player3.hand);
+  }
+  if (!player4.folded) {
+    player4.handRank = checkHandRank(player4.hand);
+  }
+  return determineWinner(players);
+}
+
+/* This function checks the string that is returned from the "showdown" function
+ * and uses it to determine how to split the pot. Currently it does this by
+ * checking if there is more than 1 active player. If there isn't then it just
+ * gives the pot to whoever hasn't folded. Otherwise it checks for every
+ * possible combination of winners. The final else statement exists because I'm
+ * pretty sure with the current game logic it is possible for all 4 players to
+ * fold. The entire function seems very inefficient to me but I haven't been
+ * able to think of a better way to do it. -Finn
+ */
+function handleWinnings(): void {
+  if (activePlayers > 1) {
+    const winner = showdown();
+    if (winner === 0) {
+      player1.balance += pot;
+    } else if (winner === 1) {
+      player2.balance += pot;
+    } else if (winner === 2) {
+      player3.balance += pot;
+    } else if (winner === 3) {
+      player4.balance += pot;
+    } /* else if (winner === 'Player1&2') {
+      player1.balance += pot / 2;
+      player2.balance += pot / 2;
+    } else if (winner === 'Player1&3') {
+      player1.balance += pot / 2;
+      player3.balance += pot / 2;
+    } else if (winner === 'Player1&4') {
+      player1.balance += pot / 2;
+      player4.balance += pot / 2;
+    } else if (winner === 'Player2&3') {
+      player2.balance += pot / 2;
+      player3.balance += pot / 2;
+    } else if (winner === 'Player2&4') {
+      player2.balance += pot / 2;
+      player4.balance += pot / 2;
+    } else if (winner === 'Player3&4') {
+      player3.balance += pot / 2;
+      player4.balance += pot / 2;
+    } else if (winner === 'Player1&2&3') {
+      player1.balance += pot / 3;
+      player2.balance += pot / 3;
+      player3.balance += pot / 3;
+    } else if (winner === 'Player1&2&4') {
+      player1.balance += pot / 3;
+      player2.balance += pot / 3;
+      player4.balance += pot / 3;
+    } else if (winner === 'Player 1&3&4') {
+      player1.balance += pot / 3;
+      player3.balance += pot / 3;
+      player4.balance += pot / 3;
+    } else if (winner === 'Player2&3&4') {
+      player2.balance += pot / 3;
+      player3.balance += pot / 3;
+      player4.balance += pot / 3;
+    } */ else {
+      player1.balance += pot / 4;
+      player2.balance += pot / 4;
+      player3.balance += pot / 4;
+      player4.balance += pot / 4;
+    }
+  } else if (!player1.folded) {
+    player1.balance += pot;
+  } else if (!player2.folded) {
+    player2.balance += pot;
+  } else if (!player3.folded) {
+    player3.balance += pot;
+  } else if (!player4.folded) {
+    player4.balance += pot;
+  } else {
+    player1.balance += pot / 4;
+    player2.balance += pot / 4;
+    player3.balance += pot / 4;
+    player4.balance += pot / 4;
+  }
+}
+
+/* This function handles each individual round in a match. At the end of the
+ * round it will reset the player's "folded" status to false and the active
+ * players to 4 in preparation for the next round. -Finn
+ */
+function playRound(): void {
+  handleBets(ANTE);
+  dealCards();
+  let bet = placeBets();
+  handleBets(bet);
+  if (activePlayers > 1) {
+    dealCards();
+    bet = placeBets();
+    handleBets(bet);
+  }
+  if (activePlayers > 1) {
+    dealCards();
+    bet = placeBets();
+    handleBets(bet);
+  }
+  if (activePlayers > 1) {
+    dealCards();
+    bet = placeBets();
+    handleBets(bet);
+  }
+  if (activePlayers > 1) {
+    dealCards();
+    bet = placeBets();
+    handleBets(bet);
+  }
+  handleWinnings();
+  activePlayers = 4;
+  player1.folded = false;
+  player2.folded = false;
+  player3.folded = false;
+  player4.folded = false;
+}
+
+function resetDeck(
+  hand1: Array<Card>,
+  hand2: Array<Card>,
+  hand3: Array<Card>,
+  hand4: Array<Card>
+): void {
+  /* This needs to push the cards from each players hand back into the DECK
+  array. Since we're just pulling them out in at random it doesn't matter what
+  order the DECK is in at the start of each round -Finn
+  */
+}
+
+// This function will handle the entirety of a 3-round match
+function playMatch(): void {
+  for (let i = 0; i < 3; i += 1) {
+    playRound();
+    resetDeck(player1.hand, player2.hand, player3.hand, player4.hand);
+  }
+}
+
+export { playMatch };
