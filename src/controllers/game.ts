@@ -1,25 +1,25 @@
 import { DECK } from '../models/cards';
 
 const player1: Player = {
-  balance: 0,
+  balance: 1000,
   hand: [],
   folded: false,
   handRank: 0,
 };
 const player2: Player = {
-  balance: 0,
+  balance: 1000,
   hand: [],
   folded: false,
   handRank: 0,
 };
 const player3: Player = {
-  balance: 0,
+  balance: 1000,
   hand: [],
   folded: false,
   handRank: 0,
 };
 const player4: Player = {
-  balance: 0,
+  balance: 1000,
   hand: [],
   folded: false,
   handRank: 0,
@@ -77,13 +77,13 @@ function dealCards(): void {
 function placeBets(): number {
   let maxBet = 0;
   // eslint-disable-next-line prefer-const
-  let player1Bet = 0;
+  let player1Bet = 10;
   // eslint-disable-next-line prefer-const
-  let player2Bet = 0;
+  let player2Bet = 10;
   // eslint-disable-next-line prefer-const
-  let player3Bet = 0;
+  let player3Bet = 10;
   // eslint-disable-next-line prefer-const
-  let player4Bet = 0;
+  let player4Bet = 10;
 
   // prompt player1 for fold
   if (!player1.folded) {
@@ -330,31 +330,6 @@ function determineWinner(player_array: Array<Player>): number {
   return winnerIndex;
 }
 
-/* This should compare all the players hands by rank from 1 to 10 and return a
- * string indicating which player or players have the best hand. This is checked
- * in the "handChecker" function. It's return value is used in the
- * "handleWinnings" function to split the pot accordingly. It also needs to
- * compare the highest card in the hands the players in the case of a tie. This
- * is because, for example, a straight consisting of a 6, 7, 8, 9, and 10 will
- * beat a straight consisting of a 2, 3, 4, 5, and 6. I'm not sure the best way
- * to go about this. -Finn
- */
-function showdown(): number {
-  if (!player1.folded) {
-    player1.handRank = checkHandRank(player1.hand);
-  }
-  if (!player2.folded) {
-    player2.handRank = checkHandRank(player2.hand);
-  }
-  if (!player3.folded) {
-    player3.handRank = checkHandRank(player3.hand);
-  }
-  if (!player4.folded) {
-    player4.handRank = checkHandRank(player4.hand);
-  }
-  return determineWinner(players);
-}
-
 /* This function checks the string that is returned from the "showdown" function
  * and uses it to determine how to split the pot. Currently it does this by
  * checking if there is more than 1 active player. If there isn't then it just
@@ -366,7 +341,7 @@ function showdown(): number {
  */
 function handleWinnings(): void {
   if (activePlayers > 1) {
-    const winner = showdown();
+    const winner = determineWinner(players);
     if (winner === 0) {
       player1.balance += pot;
     } else if (winner === 1) {
@@ -429,43 +404,7 @@ function handleWinnings(): void {
     player3.balance += pot / 4;
     player4.balance += pot / 4;
   }
-}
-
-/* This function handles each individual round in a match. At the end of the
- * round it will reset the player's "folded" status to false and the active
- * players to 4 in preparation for the next round. -Finn
- */
-function playRound(): void {
-  handleBets(ANTE);
-  dealCards();
-  let bet = placeBets();
-  handleBets(bet);
-  if (activePlayers > 1) {
-    dealCards();
-    bet = placeBets();
-    handleBets(bet);
-  }
-  if (activePlayers > 1) {
-    dealCards();
-    bet = placeBets();
-    handleBets(bet);
-  }
-  if (activePlayers > 1) {
-    dealCards();
-    bet = placeBets();
-    handleBets(bet);
-  }
-  if (activePlayers > 1) {
-    dealCards();
-    bet = placeBets();
-    handleBets(bet);
-  }
-  handleWinnings();
-  activePlayers = 4;
-  player1.folded = false;
-  player2.folded = false;
-  player3.folded = false;
-  player4.folded = false;
+  pot = 0;
 }
 
 function resetDeck(
@@ -474,10 +413,67 @@ function resetDeck(
   hand3: Array<Card>,
   hand4: Array<Card>
 ): void {
-  /* This needs to push the cards from each players hand back into the DECK
-  array. Since we're just pulling them out in at random it doesn't matter what
-  order the DECK is in at the start of each round -Finn
-  */
+  const player1Length = hand1.length;
+  const player2Length = hand2.length;
+  const player3Length = hand3.length;
+  const player4Length = hand4.length;
+  for (let i = 0; i < player1Length; i += 1) {
+    DECK.push(hand1[0]);
+    hand1.splice(0, 1);
+  }
+  for (let i = 0; i < player2Length; i += 1) {
+    DECK.push(hand2[0]);
+    hand2.splice(0, 1);
+  }
+  for (let i = 0; i < player3Length; i += 1) {
+    DECK.push(hand3[0]);
+    hand3.splice(0, 1);
+  }
+  for (let i = 0; i < player4Length; i += 1) {
+    DECK.push(hand4[0]);
+    hand4.splice(0, 1);
+  }
+}
+
+/* This function handles each individual round in a match. At the end of the
+ * round it will reset the player's "folded" status to false and the active
+ * players to 4 in preparation for the next round. -Finn
+ */
+function playRound(): void {
+  let i = 0;
+  handleBets(ANTE);
+  dealCards();
+  let bet = placeBets();
+  handleBets(bet);
+  console.log(`Player 1: ${JSON.stringify(player1.hand, null, 2)}`);
+  console.log(`Player 2: ${JSON.stringify(player2.hand, null, 2)}`);
+  console.log(`Player 3: ${JSON.stringify(player3.hand, null, 2)}`);
+  console.log(`Player 4: ${JSON.stringify(player4.hand, null, 2)}`);
+  console.log(`Pot: ${pot}`);
+  console.log(
+    `Balances: ${player1.balance}, ${player2.balance}, ${player3.balance}, ${player4.balance}`
+  );
+  while (activePlayers > 1 && i < 4) {
+    dealCards();
+    bet = placeBets();
+    handleBets(bet);
+    i += 1;
+    console.log(`Player 1: ${JSON.stringify(player1.hand, null, 2)}`);
+    console.log(`Player 2: ${JSON.stringify(player2.hand, null, 2)}`);
+    console.log(`Player 3: ${JSON.stringify(player3.hand, null, 2)}`);
+    console.log(`Player 4: ${JSON.stringify(player4.hand, null, 2)}`);
+    console.log(`Pot: ${pot}`);
+    console.log(
+      `Balances: ${player1.balance}, ${player2.balance}, ${player3.balance}, ${player4.balance}`
+    );
+  }
+
+  handleWinnings();
+  activePlayers = 4;
+  player1.folded = false;
+  player2.folded = false;
+  player3.folded = false;
+  player4.folded = false;
 }
 
 // This function will handle the entirety of a 3-round match
@@ -485,6 +481,15 @@ function playMatch(): void {
   for (let i = 0; i < 3; i += 1) {
     playRound();
     resetDeck(player1.hand, player2.hand, player3.hand, player4.hand);
+    console.log('Post-Round');
+    console.log(`Player 1: ${JSON.stringify(player1.hand, null, 2)}`);
+    console.log(`Player 2: ${JSON.stringify(player2.hand, null, 2)}`);
+    console.log(`Player 3: ${JSON.stringify(player3.hand, null, 2)}`);
+    console.log(`Player 4: ${JSON.stringify(player4.hand, null, 2)}`);
+    console.log(`Pot: ${pot}`);
+    console.log(
+      `Balances: ${player1.balance}, ${player2.balance}, ${player3.balance}, ${player4.balance}`
+    );
   }
 }
 
