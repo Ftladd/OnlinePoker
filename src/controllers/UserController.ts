@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import argon2 from 'argon2';
-import { addUser, getUserByEmail } from '../models/UserModel';
+import { addUser, getUserByEmail, allUserData } from '../models/UserModel';
 import { parseDatabaseError } from '../utils/db-utils';
 
 async function registerUser(req: Request, res: Response): Promise<void> {
@@ -41,4 +41,10 @@ async function logIn(req: Request, res: Response): Promise<void> {
   res.sendStatus(200);
 }
 
-export { registerUser, logIn };
+async function getAllUsers(req: Request, res: Response): Promise<void> {
+  const users = await allUserData();
+
+  res.json(users);
+}
+
+export { registerUser, logIn, getAllUsers };
