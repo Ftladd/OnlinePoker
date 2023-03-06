@@ -191,7 +191,7 @@ function checkHandRank(hand: Card[]): number {
   const rankCounts = [];
 
   // Push the count of each rank into rankCounts array
-  for (const rank in ranks) {
+  for (const rank of Object.keys(ranks)) {
     rankCounts.push(ranks[rank]);
   }
 
@@ -224,7 +224,7 @@ function checkHandRank(hand: Card[]): number {
   // Check for straight
   const sortedRanks = [];
   // Push each rank into the sortedRanks array
-  for (const rank in ranks) {
+  for (const rank of Object.keys(ranks)) {
     sortedRanks.push(rank);
   }
   // Sort the array of ranks numerically in ascending order by converting the
