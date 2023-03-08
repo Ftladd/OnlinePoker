@@ -43,7 +43,7 @@ async function getUsersByStackSize(stack: number): Promise<User[]> {
   const viralUsers = await userRepository
     .createQueryBuilder('user')
     .where('stackSize >= :stack', { stack })
-    .select(['user.email', 'user.userId', 'user.stackSize', 'user.joinedOn'])
+    .select(['user.userId', 'user.stackSize'])
     .getMany();
 
   return viralUsers;
