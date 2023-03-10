@@ -1,7 +1,9 @@
 import { AppDataSource } from '../dataSource';
 import { User } from '../entities/User';
+import { FriendRequest } from '../entities/FriendRequest';
 
 const userRepository = AppDataSource.getRepository(User);
+const friendRequestRepository = AppDataSource.getRepository(FriendRequest);
 
 async function allUserData(): Promise<User[]> {
   const allUsers = await userRepository.find();
@@ -49,4 +51,31 @@ async function getUsersByStackSize(stack: number): Promise<User[]> {
   return viralUsers;
 }
 
-export { allUserData, addUser, getUserByEmail, getUserById, getUsersByStackSize };
+// friend request model
+async function addFriendRequest(sender: string, receiver: string): Promise<FriendRequest | null> {
+  // Find the user with the given sender email
+  const senderUser = await userRepository.findOne({ where: { email: sender } });
+
+  // Find the user with the given receiver email
+  const receiverUser = await userRepository.findOne({ where: { email: receiver } });
+
+  // If either the sender or the receiver email is invalid, return null
+  if (!senderUser || !receiverUser) {
+    return null;
+  }
+
+  // Create a new FriendRequest instance
+  const friendRequest = new FriendRequest();
+
+  // Set the sender and receiver of the friend request to the respective user instances
+  friendRequest.sender = senderUser;
+  friendRequest.receiver = receiverUser;
+
+  // Save the friend request to our database
+  await friendRequestRepository.save(friendRequest);
+
+  // Return the newly created friend request
+  return friendRequest;
+}
+
+export { allUserData, addUser, getUserByEmail, getUserById, getUsersByStackSize, addFriendRequest };

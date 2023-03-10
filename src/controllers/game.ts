@@ -187,7 +187,7 @@ function checkHandRank(hand: Card[]): number {
     }
   }
 
-  // Get an array of the rank counts
+  // Get an array of the rank counts to store the count of each rank in the hand
   const rankCounts = [];
 
   // Push the count of each rank into rankCounts array
@@ -195,7 +195,7 @@ function checkHandRank(hand: Card[]): number {
     rankCounts.push(ranks[rank]);
   }
 
-  // Check for four of a kind, full house, two pair, and pair
+  // Check for different types of hand ranking: four of a kind, full house, two pair, and pair
   let hasFourOfAKind = false;
   let hasThreeOfAKind = false;
   let hasTwoPair = false;
@@ -281,6 +281,7 @@ function checkHandRank(hand: Card[]): number {
   return 1; // High card
 }
 
+// function for determining winner
 function determineWinner(player_array: Array<Player>): number {
   // Initialize a variable to keep track of the highest hand rank found so far
   let maxRank = 0;
@@ -289,6 +290,7 @@ function determineWinner(player_array: Array<Player>): number {
 
   // Loop through each player
   for (let i = 0; i < player_array.length; i += 1) {
+    // call checkHandRank to determine the rank of the player's hand
     const rank = checkHandRank(player_array[i].hand);
 
     // If the current player's rank is higher than the current max rank, update the max rank and winner index
