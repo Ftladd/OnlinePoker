@@ -447,27 +447,27 @@ function playRound(): void {
   dealCards();
   let bet = placeBets();
   handleBets(bet);
-  console.log(`Player 1: ${JSON.stringify(player1.hand, null, 2)}`);
+  /*   console.log(`Player 1: ${JSON.stringify(player1.hand, null, 2)}`);
   console.log(`Player 2: ${JSON.stringify(player2.hand, null, 2)}`);
   console.log(`Player 3: ${JSON.stringify(player3.hand, null, 2)}`);
   console.log(`Player 4: ${JSON.stringify(player4.hand, null, 2)}`);
   console.log(`Pot: ${pot}`);
   console.log(
     `Balances: ${player1.balance}, ${player2.balance}, ${player3.balance}, ${player4.balance}`
-  );
+  ); */
   while (activePlayers > 1 && i < 4) {
     dealCards();
     bet = placeBets();
     handleBets(bet);
     i += 1;
-    console.log(`Player 1: ${JSON.stringify(player1.hand, null, 2)}`);
+    /*     console.log(`Player 1: ${JSON.stringify(player1.hand, null, 2)}`);
     console.log(`Player 2: ${JSON.stringify(player2.hand, null, 2)}`);
     console.log(`Player 3: ${JSON.stringify(player3.hand, null, 2)}`);
     console.log(`Player 4: ${JSON.stringify(player4.hand, null, 2)}`);
     console.log(`Pot: ${pot}`);
     console.log(
       `Balances: ${player1.balance}, ${player2.balance}, ${player3.balance}, ${player4.balance}`
-    );
+    ); */
   }
 
   handleWinnings();
