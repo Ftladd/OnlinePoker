@@ -13,12 +13,6 @@ export class FriendRequest {
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   receiver: Relation<User>;
 
-  // The @Column() decorator specifies that this property should be mapped to a
-  // database column with an ENUM type, which is a type that can only have one
-  // of a fixed set of values. The default: 'pending' option specifies that if
-  // no value is provided for this property when a new FriendRequest entity is
-  // created, the default value should be 'pending'.
-
   @Column({ default: 'pending' })
   status: string;
 }
