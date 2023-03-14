@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-// import { FriendRequest } from './FriendRequest';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Relation } from 'typeorm';
+import { FriendRequest } from './FriendRequest';
 
 @Entity()
 export class User {
@@ -18,12 +18,9 @@ export class User {
   @Column({ default: 20000 })
   stackSize: number;
 
-  // @OneToMany(() => User, {onDelete: 'CASCADE'})
-  // sender: Relation<User>;
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.sender)
+  friendRequestsSent: Relation<FriendRequest>[];
 
-  // @OneToMany(() => User, { onDelete: 'CASCADE' })
-  // receiver: Relation<User>;
+  @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver)
+  friendRequestsReceived: Relation<FriendRequest>[];
 }
-
-// @ManyToOne(() => User, (user) => user.reviews)
-//   user: Relation<User>;
