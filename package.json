@@ -6,6 +6,7 @@
     "start": "node ./dist/index.js",
     "compile": "npm run clean && npx tsc --watch",
     "clean": "rimraf ./dist/",
+    "once": "node --experimental-loader=extensionless --es-module-specifier-resolution=node --no-warnings ./dist/index.js",
     "start-dev": "node --experimental-loader=extensionless --es-module-specifier-resolution=node --no-warnings --watch ./dist/index.js",
     "lint": "eslint . --ext .ts"
   },

@@ -10,9 +10,10 @@ async function allUserData(): Promise<User[]> {
   return allUsers;
 }
 
-async function addUser(email: string, passwordHash: string): Promise<User> {
+async function addUser(username: string, email: string, passwordHash: string): Promise<User> {
   // 1) Create a new user object and set the properties
   let newUser = new User();
+  newUser.username = username;
   newUser.email = email;
   newUser.passwordHash = passwordHash;
   // 2) Save it in the database
@@ -40,6 +41,11 @@ async function getUserById(userId: string): Promise<User | null> {
   return user;
 }
 
+async function getUserByUsername(username: string): Promise<User | null> {
+  const user = await userRepository.findOne({ where: { username } });
+  return user;
+}
+
 // Function that gets the users with stackSize greater than or equal to a certain number provided.
 async function getUsersByStackSize(stack: number): Promise<User[]> {
   const viralUsers = await userRepository
@@ -49,6 +55,25 @@ async function getUsersByStackSize(stack: number): Promise<User[]> {
     .getMany();
 
   return viralUsers;
+}
+
+async function updateEmailAddress(userId: string, newEmail: string): Promise<void> {
+  // TODO: Implement me!
+  await userRepository
+    .createQueryBuilder()
+    .update(User)
+    .set({ email: newEmail })
+    .where({ userId })
+    .execute();
+}
+
+async function updateUsername(userId: string, newUsername: string): Promise<void> {
+  await userRepository
+    .createQueryBuilder()
+    .update(User)
+    .set({ username: newUsername })
+    .where({ userId })
+    .execute();
 }
 
 // friend request model
@@ -78,4 +103,14 @@ async function addFriendRequest(sender: string, receiver: string): Promise<Frien
   return friendRequest;
 }
 
-export { allUserData, addUser, getUserByEmail, getUserById, getUsersByStackSize, addFriendRequest };
+export {
+  allUserData,
+  addUser,
+  getUserByEmail,
+  getUserById,
+  getUserByUsername,
+  getUsersByStackSize,
+  updateEmailAddress,
+  updateUsername,
+  addFriendRequest,
+};
