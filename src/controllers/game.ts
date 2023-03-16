@@ -1,34 +1,6 @@
-import { DECK } from '../models/cards';
+import { DECK } from '../models/CardModel';
 
-const player1: Player = {
-  balance: 1000,
-  hand: [],
-  folded: false,
-  handRank: 0,
-};
-const player2: Player = {
-  balance: 1000,
-  hand: [],
-  folded: false,
-  handRank: 0,
-};
-const player3: Player = {
-  balance: 1000,
-  hand: [],
-  folded: false,
-  handRank: 0,
-};
-const player4: Player = {
-  balance: 1000,
-  hand: [],
-  folded: false,
-  handRank: 0,
-};
-
-const players: Array<Player> = [player1, player2, player3, player4];
-
-let activePlayers: number = 4; // The number of players who have not folded
-const ANTE: number = 10; // The minimum bet that is paid at the beginning of each round
+const activePlayers: number = 4; // The number of players who have not folded
 let pot: number = 0; // The betting pool
 
 // This generates a random integer. Taken from the JavaScript documentation.
@@ -42,26 +14,13 @@ function getRandomInt(min: number, max: number): number {
  * If a player has chosen to fold at the most recent betting step they will not
  * be dealt a card. -Finn
  */
-function dealCards(): void {
-  if (!player1.folded) {
-    const deal = getRandomInt(0, DECK.length);
-    player1.hand.push(DECK[deal]);
-    DECK.splice(deal, 1);
-  }
-  if (!player2.folded) {
-    const deal = getRandomInt(0, DECK.length);
-    player2.hand.push(DECK[deal]);
-    DECK.splice(deal, 1);
-  }
-  if (!player3.folded) {
-    const deal = getRandomInt(0, DECK.length);
-    player3.hand.push(DECK[deal]);
-    DECK.splice(deal, 1);
-  }
-  if (!player4.folded) {
-    const deal = getRandomInt(0, DECK.length);
-    player4.hand.push(DECK[deal]);
-    DECK.splice(deal, 1);
+function dealCards(playerArray: Player[]): void {
+  for (let i = 0; i < playerArray.length; i += 1) {
+    if (!playerArray[i].folded) {
+      const deal = getRandomInt(0, DECK.length);
+      playerArray[i].hand.push(DECK[deal]);
+      DECK.splice(deal, 1);
+    }
   }
 }
 
@@ -74,64 +33,30 @@ function dealCards(): void {
  * him so he could convert it to something we can use in typescript, so I
  * just have placeholder comments for now. -Finn
  */
-function placeBets(): number {
+function placeBets(playerArray: Player[]): number {
   let maxBet = 0;
-  // eslint-disable-next-line prefer-const
-  let player1Bet = 10;
-  // eslint-disable-next-line prefer-const
-  let player2Bet = 10;
-  // eslint-disable-next-line prefer-const
-  let player3Bet = 10;
-  // eslint-disable-next-line prefer-const
-  let player4Bet = 10;
 
-  // prompt player1 for fold
-  if (!player1.folded) {
-    // prompt player1 for bet
-    maxBet = player1Bet;
-  }
-  // prompt player2 for fold
-  if (!player2.folded) {
-    // prompt player2 for bet
-    maxBet = player2Bet;
-  }
-  // prompt player3 for fold
-  if (!player3.folded) {
-    // prompt player3 for bet
-    maxBet = player3Bet;
-  }
-  // prompt player4 for fold
-  if (!player4.folded) {
-    // prompt player4 for bet
-    maxBet = player4Bet;
-  }
-  while (player1Bet < maxBet || player2Bet < maxBet || player3Bet < maxBet || player4Bet < maxBet) {
-    // prompt player1 for fold, if yes -1 from activePlayers
-    if (!player1.folded) {
-      if (player1Bet < maxBet) {
-        // prompt player1 for bet
-        maxBet = player1Bet;
-      }
+  for (let i = 0; i < playerArray.length; i += 1) {
+    // prompt for fold
+    if (!playerArray[i].folded) {
+      // prompt for bet
+      maxBet = playerArray[i].bet;
     }
-    // prompt player2 for fold, if yes -1 from activePlayers
-    if (!player2.folded) {
-      if (player2Bet < maxBet) {
-        // prompt player2 for bet
-        maxBet = player2Bet;
-      }
-    }
-    // prompt player3 for fold, if yes -1 from activePlayers
-    if (!player3.folded) {
-      if (player3Bet < maxBet) {
-        // prompt player3 for bet
-        maxBet = player3Bet;
-      }
-    }
-    // prompt player4 for fold, if yes -1 from activePlayers
-    if (!player4.folded) {
-      if (player4Bet < maxBet) {
-        // prompt player4 for bet
-        maxBet = player4Bet;
+  }
+
+  while (
+    playerArray[0].bet < maxBet ||
+    playerArray[1].bet < maxBet ||
+    playerArray[2].bet < maxBet ||
+    playerArray[3].bet < maxBet
+  ) {
+    // prompt player for fold, if yes -1 from activePlayers
+    for (let i = 0; i < playerArray.length; i += 1) {
+      if (!playerArray[i].folded) {
+        if (playerArray[i].bet < maxBet) {
+          // prompt player for bet
+          maxBet = playerArray[i].bet;
+        }
       }
     }
   }
@@ -142,19 +67,12 @@ function placeBets(): number {
  * that hasn't folded and adds it to the pot. It takes the current bet amount
  * as a parameter -Finn
  */
-function handleBets(bet: number): void {
+function handleBets(bet: number, playerArray: Player[]): void {
   pot += bet * activePlayers;
-  if (!player1.folded) {
-    player1.balance -= bet;
-  }
-  if (!player2.folded) {
-    player2.balance -= bet;
-  }
-  if (!player3.folded) {
-    player3.balance -= bet;
-  }
-  if (!player4.folded) {
-    player4.balance -= bet;
+  for (let i = 0; i < playerArray.length; i += 1) {
+    if (!playerArray[i].folded) {
+      playerArray[i].balance -= bet;
+    }
   }
 }
 
@@ -341,17 +259,17 @@ function determineWinner(player_array: Array<Player>): number {
  * fold. The entire function seems very inefficient to me but I haven't been
  * able to think of a better way to do it. -Finn
  */
-function handleWinnings(): void {
+function handleWinnings(playerArray: Player[]): void {
   if (activePlayers > 1) {
-    const winner = determineWinner(players);
+    const winner = determineWinner(playerArray);
     if (winner === 0) {
-      player1.balance += pot;
+      playerArray[0].balance += pot;
     } else if (winner === 1) {
-      player2.balance += pot;
+      playerArray[1].balance += pot;
     } else if (winner === 2) {
-      player3.balance += pot;
+      playerArray[2].balance += pot;
     } else if (winner === 3) {
-      player4.balance += pot;
+      playerArray[3].balance += pot;
     } /* else if (winner === 'Player1&2') {
       player1.balance += pot / 2;
       player2.balance += pot / 2;
@@ -387,24 +305,14 @@ function handleWinnings(): void {
       player3.balance += pot / 3;
       player4.balance += pot / 3;
     } */ else {
-      player1.balance += pot / 4;
-      player2.balance += pot / 4;
-      player3.balance += pot / 4;
-      player4.balance += pot / 4;
+      for (let i = 0; i < playerArray.length; i += 1) {
+        playerArray[i].balance += pot / 4;
+      }
     }
-  } else if (!player1.folded) {
-    player1.balance += pot;
-  } else if (!player2.folded) {
-    player2.balance += pot;
-  } else if (!player3.folded) {
-    player3.balance += pot;
-  } else if (!player4.folded) {
-    player4.balance += pot;
   } else {
-    player1.balance += pot / 4;
-    player2.balance += pot / 4;
-    player3.balance += pot / 4;
-    player4.balance += pot / 4;
+    for (let i = 0; i < playerArray.length; i += 1) {
+      playerArray[i].balance += pot / 4;
+    }
   }
   pot = 0;
 }
@@ -437,62 +345,4 @@ function resetDeck(
   }
 }
 
-/* This function handles each individual round in a match. At the end of the
- * round it will reset the player's "folded" status to false and the active
- * players to 4 in preparation for the next round. -Finn
- */
-function playRound(): void {
-  let i = 0;
-  handleBets(ANTE);
-  dealCards();
-  let bet = placeBets();
-  handleBets(bet);
-  /*   console.log(`Player 1: ${JSON.stringify(player1.hand, null, 2)}`);
-  console.log(`Player 2: ${JSON.stringify(player2.hand, null, 2)}`);
-  console.log(`Player 3: ${JSON.stringify(player3.hand, null, 2)}`);
-  console.log(`Player 4: ${JSON.stringify(player4.hand, null, 2)}`);
-  console.log(`Pot: ${pot}`);
-  console.log(
-    `Balances: ${player1.balance}, ${player2.balance}, ${player3.balance}, ${player4.balance}`
-  ); */
-  while (activePlayers > 1 && i < 4) {
-    dealCards();
-    bet = placeBets();
-    handleBets(bet);
-    i += 1;
-    /*     console.log(`Player 1: ${JSON.stringify(player1.hand, null, 2)}`);
-    console.log(`Player 2: ${JSON.stringify(player2.hand, null, 2)}`);
-    console.log(`Player 3: ${JSON.stringify(player3.hand, null, 2)}`);
-    console.log(`Player 4: ${JSON.stringify(player4.hand, null, 2)}`);
-    console.log(`Pot: ${pot}`);
-    console.log(
-      `Balances: ${player1.balance}, ${player2.balance}, ${player3.balance}, ${player4.balance}`
-    ); */
-  }
-
-  handleWinnings();
-  activePlayers = 4;
-  player1.folded = false;
-  player2.folded = false;
-  player3.folded = false;
-  player4.folded = false;
-}
-
-// This function will handle the entirety of a 3-round match
-function playMatch(): void {
-  for (let i = 0; i < 3; i += 1) {
-    playRound();
-    resetDeck(player1.hand, player2.hand, player3.hand, player4.hand);
-    console.log('Post-Round');
-    console.log(`Player 1: ${JSON.stringify(player1.hand, null, 2)}`);
-    console.log(`Player 2: ${JSON.stringify(player2.hand, null, 2)}`);
-    console.log(`Player 3: ${JSON.stringify(player3.hand, null, 2)}`);
-    console.log(`Player 4: ${JSON.stringify(player4.hand, null, 2)}`);
-    console.log(`Pot: ${pot}`);
-    console.log(
-      `Balances: ${player1.balance}, ${player2.balance}, ${player3.balance}, ${player4.balance}`
-    );
-  }
-}
-
-export { playMatch };
+export { resetDeck, handleBets, handleWinnings, dealCards, placeBets };
