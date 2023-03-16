@@ -19,3 +19,7 @@ type NewUsername = {
   userId: string;
   username: string;
 };
+
+type UserIdParam = {
+  userId: string;
+};
