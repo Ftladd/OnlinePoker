@@ -20,7 +20,7 @@ async function registerUser(req: Request, res: Response): Promise<void> {
   try {
     const newUser = await addUser(username, email, passwordHash);
     console.log(newUser);
-    res.sendStatus(201);
+    res.status(201);
   } catch (err) {
     console.error(err);
     const databaseErrorMessage = parseDatabaseError(err as Error);
