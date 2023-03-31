@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Relation } from 'typeorm';
 import { FriendRequest } from './FriendRequest';
+import { PrivateRoom } from './PrivateRoom';
 
 @Entity()
 export class User {
@@ -26,4 +27,7 @@ export class User {
 
   @OneToMany(() => FriendRequest, (friendRequest) => friendRequest.receiver)
   friendRequestsReceived: Relation<FriendRequest>[];
+
+  @OneToMany(() => PrivateRoom, (privateRoom) => privateRoom.owner)
+  privateRooms: Relation<PrivateRoom>[];
 }

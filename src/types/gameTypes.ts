@@ -34,5 +34,15 @@ type FriendRequest = {
   status: 'pending' | 'accepted' | 'declined';
 };
 
+// req body type for friend request
+type NewFriendRequest = {
+  senderUsername: string;
+  receiverUsername: string;
+};
+
+type PrivateRoomRequest = {
+  roomName: string;
+};
+
 // Ranks is a type that represents an object with string keys and number values.
 type Ranks = Record<string, number>;
