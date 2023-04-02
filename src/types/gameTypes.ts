@@ -21,7 +21,6 @@ type DatabaseConstraintError = {
 
 // For room management
 type GameRoom = {
-  roomId: string;
   player1Id: string | undefined;
   player2Id: string | undefined;
   player3Id: string | undefined;
