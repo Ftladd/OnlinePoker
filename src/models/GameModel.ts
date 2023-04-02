@@ -65,11 +65,11 @@ async function startGame(room: GameRoom): Promise<void> {
     userId: user4.userId,
     bet: 0,
   };
-  playMatch(player1, player2, player3, player4);
   room.player1Id = undefined;
   room.player2Id = undefined;
   room.player3Id = undefined;
   room.player4Id = undefined;
+  playMatch(player1, player2, player3, player4);
 }
 
 export { startGame };
