@@ -1,8 +1,14 @@
 import { Request, Response } from 'express';
 // import { parseDatabaseError } from '../utils/db-utils';
-import { getUserById } from '../models/UserModel';
-import { randomRooms } from '../models/RoomModel';
-import { playMatch } from '../models/GameModel';
+import { startGame } from '../models/GameModel';
+
+// Game Room
+const room1: GameRoom = {
+  player1Id: undefined,
+  player2Id: undefined,
+  player3Id: undefined,
+  player4Id: undefined,
+};
 
 function connectRandomRoom(req: Request, res: Response): void {
   const { userId } = req.params as UserIdParam;
@@ -12,87 +18,28 @@ function connectRandomRoom(req: Request, res: Response): void {
     res.sendStatus(403); // forbidden
     return;
   }
-
-  for (let i = 0; i < randomRooms.length; i += 1) {
-    if (randomRooms[i].player1Id === undefined) {
-      randomRooms[i].player1Id = userId;
-      return;
-    }
-    if (randomRooms[i].player2Id === undefined) {
-      randomRooms[i].player2Id = userId;
-      return;
-    }
-    if (randomRooms[i].player3Id === undefined) {
-      randomRooms[i].player3Id = userId;
-      return;
-    }
-    if (randomRooms[i].player4Id === undefined) {
-      randomRooms[i].player4Id = userId;
-      return;
-    }
+  if (room1.player1Id === undefined) {
+    room1.player1Id = userId;
+  } else if (room1.player2Id === undefined) {
+    room1.player2Id = userId;
+  } else if (room1.player3Id === undefined) {
+    room1.player3Id = userId;
+  } else if (room1.player4Id === undefined) {
+    room1.player4Id = userId;
+  } else {
+    res.sendStatus(404);
   }
-
-  res.sendStatus(404);
-  // I'd rather send a message that there isn't an empty
-  // But I'm not sure how to do that
-}
-
-async function startGame(req: Request, res: Response): Promise<void> {
-  for (let i = 0; i < randomRooms.length; i += 1) {
-    if (
-      randomRooms[i].player1Id !== undefined &&
-      randomRooms[i].player2Id !== undefined &&
-      randomRooms[i].player3Id !== undefined &&
-      randomRooms[i].player4Id !== undefined
-    ) {
-      const user1 = await getUserById(randomRooms[i].player1Id);
-      const user2 = await getUserById(randomRooms[i].player2Id);
-      const user3 = await getUserById(randomRooms[i].player3Id);
-      const user4 = await getUserById(randomRooms[i].player4Id);
-
-      const player1: Player = {
-        balance: user1.stackSize,
-        hand: [],
-        folded: false,
-        handRank: 0,
-        userId: user1.userId,
-        bet: 0,
-      };
-      const player2: Player = {
-        balance: user2.stackSize,
-        hand: [],
-        folded: false,
-        handRank: 0,
-        userId: user2.userId,
-        bet: 0,
-      };
-      const player3: Player = {
-        balance: user3.stackSize,
-        hand: [],
-        folded: false,
-        handRank: 0,
-        userId: user3.userId,
-        bet: 0,
-      };
-      const player4: Player = {
-        balance: user4.stackSize,
-        hand: [],
-        folded: false,
-        handRank: 0,
-        userId: user4.userId,
-        bet: 0,
-      };
-
-      res.sendStatus(200);
-      playMatch(player1, player2, player3, player4);
-      randomRooms[i].player1Id = undefined;
-      randomRooms[i].player2Id = undefined;
-      randomRooms[i].player3Id = undefined;
-      randomRooms[i].player4Id = undefined;
-      return;
-    }
+  if (
+    room1.player1Id !== undefined &&
+    room1.player2Id !== undefined &&
+    room1.player3Id !== undefined &&
+    room1.player4Id !== undefined
+  ) {
+    res.sendStatus(200);
+    startGame(room1);
+  } else {
+    res.sendStatus(404);
   }
-  res.sendStatus(404);
 }
 
 export { connectRandomRoom, startGame };

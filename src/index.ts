@@ -9,7 +9,14 @@ import connectSqlite3 from 'connect-sqlite3';
 import { Server } from 'socket.io';
 // import { playMatch } from './controllers/game'; // for testing
 import { connectRandomRoom, startGame } from './controllers/GameController';
-import { registerUser, logIn, getAllUsers, friendRequest } from './controllers/UserController';
+import {
+  registerUser,
+  logIn,
+  getAllUsers,
+  friendRequest,
+  createPrivateRoomController,
+  getPrivateRoomsByOwnerController,
+} from './controllers/UserController';
 
 dotenv.config();
 const app: Express = express();
@@ -38,7 +45,6 @@ app.post('/api/logIn', logIn);
 app.get('api/users', getAllUsers);
 
 app.post('api/game/:userId', connectRandomRoom);
-app.get('api/game', startGame);
 
 app.post('/api/friend-request', friendRequest);
 

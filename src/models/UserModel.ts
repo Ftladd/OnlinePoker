@@ -1,9 +1,11 @@
 import { AppDataSource } from '../dataSource';
 import { User } from '../entities/User';
 import { FriendRequest } from '../entities/FriendRequest';
+import { PrivateRoom } from '../entities/PrivateRoom';
 
 const userRepository = AppDataSource.getRepository(User);
 const friendRequestRepository = AppDataSource.getRepository(FriendRequest);
+const privateRoomRepository = AppDataSource.getRepository(PrivateRoom);
 
 async function allUserData(): Promise<User[]> {
   const allUsers = await userRepository.find();
@@ -77,14 +79,17 @@ async function updateUsername(userId: string, newUsername: string): Promise<void
 }
 
 // friend request model
-async function addFriendRequest(sender: string, receiver: string): Promise<FriendRequest | null> {
-  // Find the user with the given sender email
-  const senderUser = await userRepository.findOne({ where: { email: sender } });
+async function addFriendRequest(
+  senderUsername: string,
+  receiverUsername: string
+): Promise<FriendRequest | null> {
+  // Find the user with the given sender username
+  const senderUser = await userRepository.findOne({ where: { username: senderUsername } });
 
-  // Find the user with the given receiver email
-  const receiverUser = await userRepository.findOne({ where: { email: receiver } });
+  // Find the user with the given receiver username
+  const receiverUser = await userRepository.findOne({ where: { username: receiverUsername } });
 
-  // If either the sender or the receiver email is invalid, return null
+  // If either the sender or the receiver username is invalid, return null
   if (!senderUser || !receiverUser) {
     return null;
   }
@@ -103,7 +108,22 @@ async function addFriendRequest(sender: string, receiver: string): Promise<Frien
   return friendRequest;
 }
 
+// private room
+async function createPrivateRoom(owner: User, roomName: string): Promise<PrivateRoom> {
+  const privateRoom = new PrivateRoom();
+  privateRoom.owner = owner;
+  privateRoom.roomName = roomName;
+  const createdPrivateRoom = await privateRoomRepository.save(privateRoom);
+  return createdPrivateRoom;
+}
+
+async function getPrivateRoomsByOwner(owner: User): Promise<PrivateRoom[]> {
+  const privateRooms = await privateRoomRepository.find({ where: { owner } });
+  return privateRooms;
+}
+
 export {
+  User,
   allUserData,
   addUser,
   getUserByEmail,
@@ -113,4 +133,6 @@ export {
   updateEmailAddress,
   updateUsername,
   addFriendRequest,
+  createPrivateRoom,
+  getPrivateRoomsByOwner,
 };

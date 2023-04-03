@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import argon2 from 'argon2';
 import {
+  User,
   addUser,
   getUserByUsername,
   allUserData,
@@ -8,6 +9,8 @@ import {
   updateEmailAddress,
   updateUsername,
   addFriendRequest,
+  createPrivateRoom,
+  getPrivateRoomsByOwner,
 } from '../models/UserModel';
 import { parseDatabaseError } from '../utils/db-utils';
 
@@ -111,10 +114,10 @@ async function updateUserUsername(req: Request, res: Response): Promise<void> {
 
 // friend request controller
 async function friendRequest(req: Request, res: Response): Promise<void> {
-  const { sender, receiver } = req.body as FriendRequest;
+  const { senderUsername, receiverUsername } = req.body as NewFriendRequest;
 
   try {
-    await addFriendRequest(sender, receiver);
+    await addFriendRequest(senderUsername, receiverUsername);
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
@@ -122,5 +125,46 @@ async function friendRequest(req: Request, res: Response): Promise<void> {
     res.status(500).json(databaseErrorMessage);
   }
 }
+// create  a new private room for the authenticated user.
+async function createPrivateRoomController(req: Request, res: Response): Promise<void> {
+  // Extract roomName from the request body
+  const { roomName } = req.body as PrivateRoomRequest;
+  // Get the authenticated user from the session
+  const user = req.session.authenticatedUser as User;
 
-export { registerUser, logIn, getAllUsers, updateUserEmail, updateUserUsername, friendRequest };
+  try {
+    const privateRoom = await createPrivateRoom(user, roomName);
+    res.status(200).json(privateRoom);
+  } catch (err) {
+    console.error(err);
+    const databaseErrorMessage = parseDatabaseError(err as Error);
+    res.status(500).json(databaseErrorMessage);
+  }
+}
+// retrieves all the private rooms owned by a specific user,
+// identified by the authenticated user stored in the session.
+async function getPrivateRoomsByOwnerController(req: Request, res: Response): Promise<void> {
+  // Get the authenticated user from the session
+  const user = req.session.authenticatedUser as User;
+
+  try {
+    const privateRooms = await getPrivateRoomsByOwner(user);
+    // Return the private rooms in the response
+    res.status(200).json(privateRooms);
+  } catch (err) {
+    console.error(err);
+    const databaseErrorMessage = parseDatabaseError(err as Error);
+    res.status(500).json(databaseErrorMessage);
+  }
+}
+
+export {
+  registerUser,
+  logIn,
+  getAllUsers,
+  updateUserEmail,
+  updateUserUsername,
+  friendRequest,
+  createPrivateRoomController,
+  getPrivateRoomsByOwnerController,
+};

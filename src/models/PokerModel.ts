@@ -1,4 +1,4 @@
-import { DECK } from '../models/CardModel';
+import { DECK } from './CardModel';
 
 const activePlayers: number = 4; // The number of players who have not folded
 let pot: number = 0; // The betting pool

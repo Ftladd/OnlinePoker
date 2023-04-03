@@ -21,7 +21,6 @@ type DatabaseConstraintError = {
 
 // For room management
 type GameRoom = {
-  roomId: string;
   player1Id: string | undefined;
   player2Id: string | undefined;
   player3Id: string | undefined;
@@ -33,6 +32,16 @@ type FriendRequest = {
   sender: string;
   receiver: string;
   status: 'pending' | 'accepted' | 'declined';
+};
+
+// req body type for friend request
+type NewFriendRequest = {
+  senderUsername: string;
+  receiverUsername: string;
+};
+
+type PrivateRoomRequest = {
+  roomName: string;
 };
 
 // Ranks is a type that represents an object with string keys and number values.
