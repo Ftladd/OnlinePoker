@@ -124,7 +124,7 @@ async function friendRequest(req: Request, res: Response): Promise<void> {
     res.status(500).json(databaseErrorMessage);
   }
 }
-
+// create  a new private room for the authenticated user.
 async function createPrivateRoomController(req: Request, res: Response): Promise<void> {
   // Extract roomName from the request body
   const { roomName } = req.body as PrivateRoomRequest;
@@ -133,14 +133,15 @@ async function createPrivateRoomController(req: Request, res: Response): Promise
 
   try {
     const privateRoom = await createPrivateRoom(user, roomName);
-    res.status(201).json(privateRoom);
+    res.status(200).json(privateRoom);
   } catch (err) {
     console.error(err);
     const databaseErrorMessage = parseDatabaseError(err as Error);
     res.status(500).json(databaseErrorMessage);
   }
 }
-
+// retrieves all the private rooms owned by a specific user,
+// identified by the authenticated user stored in the session.
 async function getPrivateRoomsByOwnerController(req: Request, res: Response): Promise<void> {
   // Get the authenticated user from the session
   const user = req.session.authenticatedUser as User;
@@ -148,7 +149,7 @@ async function getPrivateRoomsByOwnerController(req: Request, res: Response): Pr
   try {
     const privateRooms = await getPrivateRoomsByOwner(user);
     // Return the private rooms in the response
-    res.json(privateRooms);
+    res.status(200).json(privateRooms);
   } catch (err) {
     console.error(err);
     const databaseErrorMessage = parseDatabaseError(err as Error);
