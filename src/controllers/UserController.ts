@@ -3,7 +3,7 @@ import argon2 from 'argon2';
 import {
   User,
   addUser,
-  getUserByEmail,
+  getUserByUsername,
   allUserData,
   getUserById,
   updateEmailAddress,
@@ -23,7 +23,7 @@ async function registerUser(req: Request, res: Response): Promise<void> {
   try {
     const newUser = await addUser(username, email, passwordHash);
     console.log(newUser);
-    res.status(201);
+    res.redirect('/login');
   } catch (err) {
     console.error(err);
     const databaseErrorMessage = parseDatabaseError(err as Error);
@@ -32,9 +32,9 @@ async function registerUser(req: Request, res: Response): Promise<void> {
 }
 
 async function logIn(req: Request, res: Response): Promise<void> {
-  const { email, password } = req.body as NewUserRequest;
+  const { username, password } = req.body as NewUserRequest;
 
-  const user = await getUserByEmail(email);
+  const user = await getUserByUsername(username);
 
   if (!user) {
     res.sendStatus(404);
@@ -53,10 +53,11 @@ async function logIn(req: Request, res: Response): Promise<void> {
   req.session.authenticatedUser = {
     userId: user.userId,
     email: user.email,
+    username: user.username,
   };
   req.session.isLoggedIn = true;
 
-  res.sendStatus(200);
+  res.redirect('/chat');
 }
 
 async function getAllUsers(req: Request, res: Response): Promise<void> {
