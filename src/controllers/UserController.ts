@@ -16,7 +16,12 @@ import { parseDatabaseError } from '../utils/db-utils';
 
 async function registerUser(req: Request, res: Response): Promise<void> {
   const { username, email, password } = req.body as NewUserRequest;
+  const { authenticatedUser } = req.session;
 
+  if (username === authenticatedUser.username) {
+    res.sendStatus(404);
+    return;
+  }
   // Hash Password
   const passwordHash = await argon2.hash(password);
 
@@ -49,7 +54,6 @@ async function logIn(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  await req.session.clearSession();
   req.session.authenticatedUser = {
     userId: user.userId,
     email: user.email,
