@@ -71,7 +71,6 @@ async function getAllUsers(req: Request, res: Response): Promise<void> {
 }
 
 async function updateUserEmail(req: Request, res: Response): Promise<void> {
-  // TODO: Implement me!
   const { email, userId } = req.params as NewEmailBody;
 
   const user = await getUserById(userId);
