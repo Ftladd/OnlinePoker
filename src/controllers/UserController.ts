@@ -11,6 +11,7 @@ import {
   addFriendRequest,
   createPrivateRoom,
   getPrivateRoomsByOwner,
+  createInvitation,
 } from '../models/UserModel';
 import { parseDatabaseError } from '../utils/db-utils';
 
@@ -117,6 +118,13 @@ async function updateUserUsername(req: Request, res: Response): Promise<void> {
 
 // friend request controller
 async function friendRequest(req: Request, res: Response): Promise<void> {
+  // Get the authenticated user from the session
+  const user = req.session.authenticatedUser as User;
+  if (!user) {
+    // Return a 401 unauthorized status if the user is not authenticated
+    res.status(401).send('Unauthorized');
+    return;
+  }
   const { senderUsername, receiverUsername } = req.body as NewFriendRequest;
 
   try {
@@ -130,10 +138,15 @@ async function friendRequest(req: Request, res: Response): Promise<void> {
 }
 // create  a new private room for the authenticated user.
 async function createPrivateRoomController(req: Request, res: Response): Promise<void> {
-  // Extract roomName from the request body
-  const { roomName } = req.body as PrivateRoomRequest;
   // Get the authenticated user from the session
   const user = req.session.authenticatedUser as User;
+
+  if (!user) {
+    res.status(401).send('Unauthorized');
+    return;
+  }
+
+  const { roomName } = req.body as PrivateRoomRequest;
 
   try {
     const privateRoom = await createPrivateRoom(user, roomName);
@@ -161,6 +174,31 @@ async function getPrivateRoomsByOwnerController(req: Request, res: Response): Pr
   }
 }
 
+async function createInvitationController(req: Request, res: Response): Promise<void> {
+  // Get the authenticated user from the session
+  const user = req.session.authenticatedUser as User;
+  if (!user) {
+    // Return a 401 unauthorized status if the user is not authenticated
+    res.status(401).send('Unauthorized');
+    return;
+  }
+
+  // Get the necessary data from the request body
+  const { senderUsername, roomName, invitedUsernames } = req.body as NewInvitation;
+
+  try {
+    // Create the invitation
+    const invitation = await createInvitation(senderUsername, roomName, invitedUsernames);
+
+    // If the invitation was successfully created, send a 200 OK response
+    res.sendStatus(200).json(invitation);
+  } catch (err) {
+    console.error(err);
+    const databaseErrorMessage = parseDatabaseError(err as Error);
+    res.status(500).json(databaseErrorMessage);
+  }
+}
+
 export {
   registerUser,
   logIn,
@@ -170,4 +208,5 @@ export {
   friendRequest,
   createPrivateRoomController,
   getPrivateRoomsByOwnerController,
+  createInvitationController,
 };
