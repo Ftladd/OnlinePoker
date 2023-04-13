@@ -2,10 +2,12 @@ import { AppDataSource } from '../dataSource';
 import { User } from '../entities/User';
 import { FriendRequest } from '../entities/FriendRequest';
 import { PrivateRoom } from '../entities/PrivateRoom';
+import { Invitation } from '../entities/Invitation';
 
 const userRepository = AppDataSource.getRepository(User);
 const friendRequestRepository = AppDataSource.getRepository(FriendRequest);
 const privateRoomRepository = AppDataSource.getRepository(PrivateRoom);
+const invitationRepository = AppDataSource.getRepository(Invitation);
 
 async function allUserData(): Promise<User[]> {
   const allUsers = await userRepository.find();
@@ -122,6 +124,55 @@ async function getPrivateRoomsByOwner(owner: User): Promise<PrivateRoom[]> {
   return privateRooms;
 }
 
+// invitation system
+async function createInvitation(
+  senderUsername: string,
+  roomName: string,
+  invitedUsernames: string
+): Promise<Invitation | null> {
+  // Find the user with the given sender username
+  const senderUser = await userRepository.findOne({ where: { username: senderUsername } });
+
+  // If the sender username is invalid, return null
+  if (!senderUser) {
+    return null;
+  }
+
+  // Find the private room with the given name
+  // const privateRoom = await privateRoomRepository.findOne({ name: roomName });
+  const privateRoom = await privateRoomRepository.findOne({ where: { roomName } });
+
+  // If the room doesn't exist, return null
+  if (!privateRoom) {
+    return null;
+  }
+
+  // Find the users with the given invited usernames
+  const invitedUsers = [];
+  for (let i = 0; i < invitedUsernames.length; i += 1) {
+    const invitedUser = await userRepository.findOne({ where: { username: invitedUsernames[i] } });
+    if (!invitedUser) {
+      return null;
+    }
+    invitedUsers.push(invitedUser);
+  }
+
+  // Create a new Invitation instance
+  const invitation = new Invitation();
+
+  // Set the sender and private room of the invitation
+  invitation.sender = senderUser;
+  invitation.privateRoom = privateRoom;
+
+  // Add the invited users to the invitation
+  invitation.invitedUsers = invitedUsers;
+  // Save the invitation to the database
+  await invitationRepository.save(invitation);
+
+  // Return the newly created invitation
+  return invitation;
+}
+
 export {
   User,
   allUserData,
@@ -135,4 +186,5 @@ export {
   addFriendRequest,
   createPrivateRoom,
   getPrivateRoomsByOwner,
+  createInvitation,
 };

@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 import connectSqlite3 from 'connect-sqlite3';
 import { Server } from 'socket.io';
 // import { playMatch } from './controllers/game'; // for testing
-import { connectRandomRoom, startGame } from './controllers/GameController';
+import { connectRandomRoom } from './controllers/GameController';
 import {
   registerUser,
   logIn,

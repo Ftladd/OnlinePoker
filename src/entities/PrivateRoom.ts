@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Relation } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Relation, ManyToMany } from 'typeorm';
 import { User } from './User';
+import { Invitation } from './Invitation';
 
 @Entity()
 export class PrivateRoom {
@@ -11,4 +12,7 @@ export class PrivateRoom {
 
   @ManyToOne(() => User, (user) => user.privateRooms)
   owner: Relation<User>;
+
+  @ManyToMany(() => Invitation, (invitation) => invitation.privateRoom)
+  invitations: Relation<Invitation>;
 }
