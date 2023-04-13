@@ -14,8 +14,8 @@ import {
   logIn,
   getAllUsers,
   friendRequest,
-  createPrivateRoomController,
-  getPrivateRoomsByOwnerController,
+  // createPrivateRoomController,
+  // getPrivateRoomsByOwnerController,
 } from './controllers/UserController';
 
 dotenv.config();

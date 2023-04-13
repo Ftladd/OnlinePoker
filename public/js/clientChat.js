@@ -1,7 +1,7 @@
 const messages = document.getElementById('messages');
 const chatForm = document.getElementById('chatForm');
 const chatMessage = document.getElementById('chatMessage');
-const transfer = document.getElementById('transfer');
+// const transfer = document.getElementById('transfer');
 
 // eslint-disable-next-line no-undef
 const socket = io();

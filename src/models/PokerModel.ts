@@ -8,6 +8,11 @@ function getRandomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
+// function folded(): boolean {
+//   const current: boolean = true;
+//   return current;
+// }
+
 /* Happy with this function. It will generate a random integer and push the Card
  * at that index from the DECK array into the PlayerHand array. It will then
  * remove that same card from the deck array so that it cannot be "dealt" again.
