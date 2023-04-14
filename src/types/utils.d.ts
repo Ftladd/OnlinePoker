@@ -5,9 +5,9 @@
 // };
 
 type NewUserRequest = {
+  username: string;
   email: string;
   password: string;
-  username: string;
 };
 
 type NewEmailBody = {

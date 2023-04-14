@@ -29,7 +29,7 @@ async function registerUser(req: Request, res: Response): Promise<void> {
   try {
     const newUser = await addUser(username, email, passwordHash);
     console.log(newUser);
-    res.redirect('/login');
+    res.redirect('/api/login');
   } catch (err) {
     console.error(err);
     const databaseErrorMessage = parseDatabaseError(err as Error);

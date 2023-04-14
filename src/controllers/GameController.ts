@@ -11,21 +11,24 @@ const room1: GameRoom = {
 };
 
 function connectRandomRoom(req: Request, res: Response): void {
-  const { userId } = req.params as UserIdParam;
   const { isLoggedIn, authenticatedUser } = req.session;
 
-  if (!isLoggedIn || authenticatedUser.userId !== userId) {
+  if (!isLoggedIn || !authenticatedUser) {
     res.sendStatus(403); // forbidden
     return;
   }
   if (room1.player1Id === undefined) {
-    room1.player1Id = userId;
+    room1.player1Id = authenticatedUser.userId;
+    res.redirect('/waitingRoom');
   } else if (room1.player2Id === undefined) {
-    room1.player2Id = userId;
+    room1.player2Id = authenticatedUser.userId;
+    res.redirect('/waitingRoom');
   } else if (room1.player3Id === undefined) {
-    room1.player3Id = userId;
+    room1.player3Id = authenticatedUser.userId;
+    res.redirect('/waitingRoom');
   } else if (room1.player4Id === undefined) {
-    room1.player4Id = userId;
+    room1.player4Id = authenticatedUser.userId;
+    res.redirect('/waitingRoom');
   } else {
     res.sendStatus(404);
   }
