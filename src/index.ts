@@ -42,9 +42,9 @@ app.use(express.urlencoded({ extended: false }));
 
 app.post('/api/users', registerUser);
 app.post('/api/logIn', logIn);
-app.get('api/users', getAllUsers);
+app.get('/api/users', getAllUsers);
 
-app.post('api/game/:userId', connectRandomRoom);
+app.post('/game/play', connectRandomRoom);
 
 app.post('/api/friend-request', friendRequest);
 
