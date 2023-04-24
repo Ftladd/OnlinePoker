@@ -62,7 +62,7 @@ async function logIn(req: Request, res: Response): Promise<void> {
   };
   req.session.isLoggedIn = true;
 
-  res.redirect('/chat');
+  res.redirect('/play');
 }
 
 async function getAllUsers(req: Request, res: Response): Promise<void> {
