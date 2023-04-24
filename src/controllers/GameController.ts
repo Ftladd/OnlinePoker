@@ -40,8 +40,6 @@ function connectRandomRoom(req: Request, res: Response): void {
   ) {
     res.sendStatus(200);
     startGame(room1);
-  } else {
-    res.sendStatus(404);
   }
 }
 
