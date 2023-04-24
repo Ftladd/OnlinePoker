@@ -27,17 +27,12 @@ type GameRoom = {
   player4Id: string | undefined;
 };
 
-// type for friend request
-type FriendRequest = {
-  sender: string;
-  receiver: string;
-  status: 'pending' | 'accepted' | 'declined';
-};
-
 // req body type for friend request
 type NewFriendRequest = {
   senderUsername: string;
   receiverUsername: string;
+  status: 'pending' | 'accepted' | 'declined';
+  friendRequestId: string;
 };
 
 type PrivateRoomRequest = {
@@ -48,6 +43,8 @@ type NewInvitation = {
   senderUsername: string;
   roomName: string;
   invitedUsernames: string;
+  status: 'pending' | 'accepted' | 'declined';
+  invitationId: string;
 };
 
 // Ranks is a type that represents an object with string keys and number values.

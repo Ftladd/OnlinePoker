@@ -9,9 +9,13 @@ import {
   updateEmailAddress,
   updateUsername,
   addFriendRequest,
+  acceptFriendRequest,
+  declineFriendRequest,
   createPrivateRoom,
   getPrivateRoomsByOwner,
   createInvitation,
+  acceptInvitation,
+  declineInvitation,
 } from '../models/UserModel';
 import { parseDatabaseError } from '../utils/db-utils';
 
@@ -125,17 +129,81 @@ async function friendRequest(req: Request, res: Response): Promise<void> {
     res.status(401).send('Unauthorized');
     return;
   }
+
+  // Get the necessary data from the request body
   const { senderUsername, receiverUsername } = req.body as NewFriendRequest;
 
   try {
-    await addFriendRequest(senderUsername, receiverUsername);
-    res.sendStatus(200);
+    // Send the friend request
+    const friendRequests = await addFriendRequest(senderUsername, receiverUsername);
+
+    // If the request was successfully created, send a 200 OK response with the friendRequestId
+    res.status(200).json(friendRequests);
   } catch (err) {
     console.error(err);
     const databaseErrorMessage = parseDatabaseError(err as Error);
     res.status(500).json(databaseErrorMessage);
   }
 }
+
+// accpt friend request controller
+async function acceptFriendRequestController(req: Request, res: Response): Promise<void> {
+  // Get the authenticated user from the session
+  const user = req.session.authenticatedUser as User;
+  if (!user) {
+    // Return a 401 unauthorized status if the user is not authenticated
+    res.status(401).send('Unauthorized');
+    return;
+  }
+
+  // Get the friend request ID from the request parameters
+  const { friendRequestId } = req.params;
+
+  try {
+    // Accept the friend request
+    const request = await acceptFriendRequest(friendRequestId);
+
+    if (!request) {
+      res.status(404).send('Friend request not found');
+    } else {
+      res.status(200).json(request);
+    }
+  } catch (err) {
+    console.error(err);
+    const databaseErrorMessage = parseDatabaseError(err as Error);
+    res.status(500).json(databaseErrorMessage);
+  }
+}
+
+// declined friend request controller
+async function declineFriendRequestController(req: Request, res: Response): Promise<void> {
+  // Get the authenticated user from the session
+  const user = req.session.authenticatedUser as User;
+  if (!user) {
+    // Return a 401 unauthorized status if the user is not authenticated
+    res.status(401).send('Unauthorized');
+    return;
+  }
+
+  // Get the friend request ID from the request parameters
+  const { friendRequestId } = req.params;
+
+  try {
+    // Decline the friend request
+    const request = await declineFriendRequest(friendRequestId);
+
+    if (!request) {
+      res.status(404).send('Friend request not found');
+    } else {
+      res.status(200).json(request);
+    }
+  } catch (err) {
+    console.error(err);
+    const databaseErrorMessage = parseDatabaseError(err as Error);
+    res.status(500).json(databaseErrorMessage);
+  }
+}
+
 // create  a new private room for the authenticated user.
 async function createPrivateRoomController(req: Request, res: Response): Promise<void> {
   // Get the authenticated user from the session
@@ -191,7 +259,63 @@ async function createInvitationController(req: Request, res: Response): Promise<
     const invitation = await createInvitation(senderUsername, roomName, invitedUsernames);
 
     // If the invitation was successfully created, send a 200 OK response
-    res.sendStatus(200).json(invitation);
+    res.status(200).json(invitation);
+  } catch (err) {
+    console.error(err);
+    const databaseErrorMessage = parseDatabaseError(err as Error);
+    res.status(500).json(databaseErrorMessage);
+  }
+}
+
+async function acceptInvitationController(req: Request, res: Response): Promise<void> {
+  // Get the authenticated user from the session
+  const user = req.session.authenticatedUser as User;
+  if (!user) {
+    // Return a 401 unauthorized status if the user is not authenticated
+    res.status(401).send('Unauthorized');
+    return;
+  }
+
+  // Get the invitation ID from the request parameters
+  const { invitationId } = req.params;
+
+  try {
+    // Accept the invitation
+    const invitation = await acceptInvitation(invitationId);
+
+    if (!invitation) {
+      res.status(404).send('Invitation not found');
+    } else {
+      res.status(200).json(invitation);
+    }
+  } catch (err) {
+    console.error(err);
+    const databaseErrorMessage = parseDatabaseError(err as Error);
+    res.status(500).json(databaseErrorMessage);
+  }
+}
+
+async function declineInvitationController(req: Request, res: Response): Promise<void> {
+  // Get the authenticated user from the session
+  const user = req.session.authenticatedUser as User;
+  if (!user) {
+    // Return a 401 unauthorized status if the user is not authenticated
+    res.status(401).send('Unauthorized');
+    return;
+  }
+
+  // Get the invitation ID from the request parameters
+  const { invitationId } = req.params;
+
+  try {
+    // Decline the invitation
+    const invitation = await declineInvitation(invitationId);
+
+    if (!invitation) {
+      res.status(404).send('Invitation not found');
+    } else {
+      res.status(200).json(invitation);
+    }
   } catch (err) {
     console.error(err);
     const databaseErrorMessage = parseDatabaseError(err as Error);
@@ -206,7 +330,11 @@ export {
   updateUserEmail,
   updateUserUsername,
   friendRequest,
+  acceptFriendRequestController,
+  declineFriendRequestController,
   createPrivateRoomController,
   getPrivateRoomsByOwnerController,
   createInvitationController,
+  acceptInvitationController,
+  declineInvitationController,
 };

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Invitation</title>
+  <!-- <link rel="stylesheet" href="/css/style.css"> -->
+</head>
+<body>
+  <h1>Invitation</h1>
+  <% if (invitation.status === 'pending') { %>
+    <p>You have been invited to join <%= invitation.roomName %> by <%= invitation.senderUsername %>.</p>
+    <form method="POST" action="/api/invitation/<%= invitation.invitationId %>/accept">
+      <input type="submit" value="Accept">
+    </form>
+    <form method="POST" action="/api/invitation/<%= invitation.invitationId %>/decline">
+      <input type="submit" value="Decline">
+    </form>
+  <% } else if (invitation.status === 'accepted') { %>
+    <p>You have accepted the invitation to join <%= invitation.roomName %> by <%= invitation.senderUsername %>!</p>
+  <% } else if (invitation.status === 'declined') { %>
+    <p>You have declined the invitation to join <%= invitation.roomName %> by <%= invitation.senderUsername %>.</p>
+  <% } %>
+</body>
+</html>

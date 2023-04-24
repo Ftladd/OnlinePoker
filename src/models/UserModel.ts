@@ -80,7 +80,11 @@ async function updateUsername(userId: string, newUsername: string): Promise<void
     .execute();
 }
 
-// friend request model
+// async function getfriendRequestById(friendRequestId: string): Promise<FriendRequest | null> {
+//   const request = await friendRequestRepository.findOne({ where: { friendRequestId } });
+//   return request;
+// }
+
 async function addFriendRequest(
   senderUsername: string,
   receiverUsername: string
@@ -96,27 +100,68 @@ async function addFriendRequest(
     return null;
   }
 
-  // Create a new FriendRequest instance
-  const friendRequest = new FriendRequest();
+  // Create a new FriendRequest instance with pending status
+  let friendRequest = new FriendRequest();
+  friendRequest.status = 'pending';
 
   // Set the sender and receiver of the friend request to the respective user instances
   friendRequest.sender = senderUser;
   friendRequest.receiver = receiverUser;
 
   // Save the friend request to our database
-  await friendRequestRepository.save(friendRequest);
+  friendRequest = await friendRequestRepository.save(friendRequest);
 
   // Return the newly created friend request
   return friendRequest;
 }
 
+// accpet friend request model
+async function acceptFriendRequest(friendRequestId: string): Promise<FriendRequest | null> {
+  // Find the friend request with the given ID
+  const friendRequest = await friendRequestRepository.findOne({ where: { friendRequestId } });
+
+  // If the friend request doesn't exist, return null
+  if (!friendRequest) {
+    return null;
+  }
+
+  // Update the friend request status to 'accepted'
+  friendRequest.status = 'accepted';
+
+  // Save the updated friend request to the database
+  await friendRequestRepository.save(friendRequest);
+
+  // Return the updated friend request
+  return friendRequest;
+}
+
+// decline friiend request model
+async function declineFriendRequest(friendRequestId: string): Promise<FriendRequest | null> {
+  // Find the friend request with the given ID
+  const friendRequest = await friendRequestRepository.findOne({ where: { friendRequestId } });
+
+  // If the friend request doesn't exist, return null
+  if (!friendRequest) {
+    return null;
+  }
+
+  // Update the friend request status to 'declined'
+  friendRequest.status = 'declined';
+
+  // Save the updated friend request to the database
+  await friendRequestRepository.save(friendRequest);
+
+  // Return the updated friend request
+  return friendRequest;
+}
+
 // private room
 async function createPrivateRoom(owner: User, roomName: string): Promise<PrivateRoom> {
-  const privateRoom = new PrivateRoom();
+  let privateRoom = new PrivateRoom();
   privateRoom.owner = owner;
   privateRoom.roomName = roomName;
-  const createdPrivateRoom = await privateRoomRepository.save(privateRoom);
-  return createdPrivateRoom;
+  privateRoom = await privateRoomRepository.save(privateRoom);
+  return privateRoom;
 }
 
 async function getPrivateRoomsByOwner(owner: User): Promise<PrivateRoom[]> {
@@ -139,7 +184,6 @@ async function createInvitation(
   }
 
   // Find the private room with the given name
-  // const privateRoom = await privateRoomRepository.findOne({ name: roomName });
   const privateRoom = await privateRoomRepository.findOne({ where: { roomName } });
 
   // If the room doesn't exist, return null
@@ -157,8 +201,9 @@ async function createInvitation(
     invitedUsers.push(invitedUser);
   }
 
-  // Create a new Invitation instance
-  const invitation = new Invitation();
+  // Create a new Invitation instance with a "pending" status
+  let invitation = new Invitation();
+  invitation.status = 'pending';
 
   // Set the sender and private room of the invitation
   invitation.sender = senderUser;
@@ -166,10 +211,51 @@ async function createInvitation(
 
   // Add the invited users to the invitation
   invitation.invitedUsers = invitedUsers;
+
+  // invitation.status = 'pending';
+
   // Save the invitation to the database
-  await invitationRepository.save(invitation);
+  invitation = await invitationRepository.save(invitation);
 
   // Return the newly created invitation
+  return invitation;
+}
+
+async function acceptInvitation(invitationId: string): Promise<Invitation | null> {
+  // Find the invitation with the given ID
+  const invitation = await invitationRepository.findOne({ where: { invitationId } });
+
+  // If the invitation doesn't exist, return null
+  if (!invitation) {
+    return null;
+  }
+
+  // Update the invitation status to 'accepted'
+  invitation.status = 'accepted';
+
+  // Save the updated invitation to the database
+  await invitationRepository.save(invitation);
+
+  // Return the updated invitation
+  return invitation;
+}
+
+async function declineInvitation(invitationId: string): Promise<Invitation | null> {
+  // Find the invitation with the given ID
+  const invitation = await invitationRepository.findOne({ where: { invitationId } });
+
+  // If the invitation doesn't exist, return null
+  if (!invitation) {
+    return null;
+  }
+
+  // Update the invitation status to 'declined'
+  invitation.status = 'declined';
+
+  // Save the updated invitation to the database
+  await invitationRepository.save(invitation);
+
+  // Return the updated invitation
   return invitation;
 }
 
@@ -184,7 +270,11 @@ export {
   updateEmailAddress,
   updateUsername,
   addFriendRequest,
+  acceptFriendRequest,
+  declineFriendRequest,
   createPrivateRoom,
   getPrivateRoomsByOwner,
   createInvitation,
+  acceptInvitation,
+  declineInvitation,
 };

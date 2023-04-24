@@ -5,7 +5,7 @@ import { User } from './User';
 @Check(`"status" = 'pending' | "status" = 'accepted' | "status" = 'declined'`)
 export class FriendRequest {
   @PrimaryGeneratedColumn('uuid')
-  friendRequestId: string;
+  friendRequestId:string
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   sender: Relation<User>;
