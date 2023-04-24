@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Friend Request</title>
+  <!-- <link rel="stylesheet" href="/css/style.css" > -->
+</head>
+<body>
+  <h1>Friend Request</h1>
+  <% if (friendRequest.status === 'pending') { %>
+    <p>You have a friend request from <%= friendRequest.senderUsername %>.</p>
+    <form method="POST" action="/api/friendRequest/<%= friendRequest.friendRequestId %>/accept">
+      <input type="submit" value="Accept">
+    </form>
+    <form method="POST" action="/api/friendRequest/<%= friendRequest.friendRequestId %>/decline">
+      <input type="submit" value="Decline">
+    </form>
+  <% } else if (friendRequest.status === 'accepted') { %>
+    <p>You are now friends with <%= friendRequest.senderUsername %>!</p>
+  <% } else if (friendRequest.status === 'declined') { %>
+    <p>You declined the friend request from <%= friendRequest.senderUsername %>.</p>
+  <% } %>
+</body>
+</html>

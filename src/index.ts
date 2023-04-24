@@ -14,8 +14,13 @@ import {
   logIn,
   getAllUsers,
   friendRequest,
-  // createPrivateRoomController,
-  // getPrivateRoomsByOwnerController,
+  acceptFriendRequestController,
+  declineFriendRequestController,
+  createPrivateRoomController,
+  getPrivateRoomsByOwnerController,
+  createInvitationController,
+  acceptInvitationController,
+  declineInvitationController,
 } from './controllers/UserController';
 
 dotenv.config();
@@ -42,11 +47,25 @@ app.use(express.urlencoded({ extended: false }));
 
 app.post('/api/users', registerUser);
 app.post('/api/logIn', logIn);
-app.get('/api/users', getAllUsers);
+app.get('api/users', getAllUsers);
 
-app.post('/game/play', connectRandomRoom);
+app.post('api/game/:userId', connectRandomRoom);
 
-app.post('/api/friend-request', friendRequest);
+app.post('/api/friendRequest', friendRequest);
+
+app.post('/api/friendRequest/:friendRequestId/accept', acceptFriendRequestController);
+
+app.post('/api/friendRequest/:friendRequestId/decline', declineFriendRequestController);
+
+app.post('/api/privateRooms', createPrivateRoomController);
+
+app.get('/api/privateRoomsByOwner', getPrivateRoomsByOwnerController);
+
+app.post('/api/invitations', createInvitationController);
+
+app.post('/api/invitation/:invitationId/accept', acceptInvitationController);
+
+app.post('/api/invitation/:invitationId/decline', declineInvitationController);
 
 const server = app.listen(PORT, () => {
   console.log(`App is listening on port http://${ip.address()}:${PORT}`);

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Send Friend Request</title>
+  </head>
+  <body>
+    <h1>Send Friend Request</h1>
+    <form action="/api/friendRequest" method="POST">
+      <label for="senderUsername">Your Username:</label>
+      <input type="text" id="senderUsername" name="senderUsername"><br><br>
+
+      <label for="receiverUsername">Recipient Username:</label>
+      <input type="text" id="receiverUsername" name="receiverUsername"><br><br>
+
+      <button type="submit">Send Friend Request</button>
+    </form>
+  </body>
+</html>

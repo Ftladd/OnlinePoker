@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Invitation</title>
+  </head>
+  <body>
+    <h1>Create Invitation</h1>
+    <form action="/api/invitations" method="POST">
+      <label for="senderUsername">Sender Username:</label>
+      <input type="text" id="senderUsername" name="senderUsername"><br><br>
+
+      <label for="roomName">Room Name:</label>
+      <input type="text" id="roomName" name="roomName"><br><br>
+
+      <label for="invitedUsernames">Invited Usernames:</label>
+      <input type="text" id="invitedUsernames" name="invitedUsernames"><br><br>
+
+      <button type="submit">Create Invitation</button>
+    </form>
+  </body>
+</html>
