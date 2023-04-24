@@ -49,7 +49,7 @@ app.post('/api/users', registerUser);
 app.post('/api/logIn', logIn);
 app.get('api/users', getAllUsers);
 
-app.post('api/game/:userId', connectRandomRoom);
+app.post('/api/game/:userId', connectRandomRoom);
 
 app.post('/api/friendRequest', friendRequest);
 
