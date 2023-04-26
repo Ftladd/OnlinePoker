@@ -218,7 +218,9 @@ async function createPrivateRoomController(req: Request, res: Response): Promise
 
   try {
     const privateRoom = await createPrivateRoom(user, roomName);
-    res.status(200).json(privateRoom);
+    // res.status(200).json(privateRoom);
+    console.log(privateRoom);
+    res.redirect('/invitation');
   } catch (err) {
     console.error(err);
     const databaseErrorMessage = parseDatabaseError(err as Error);

@@ -39,6 +39,7 @@ async function startGame(room: GameRoom): Promise<void> {
     folded: false,
     handRank: 0,
     userId: user1.userId,
+    username: user1.username,
     bet: 0,
   };
   const player2: Player = {
@@ -47,6 +48,7 @@ async function startGame(room: GameRoom): Promise<void> {
     folded: false,
     handRank: 0,
     userId: user2.userId,
+    username: user2.username,
     bet: 0,
   };
   const player3: Player = {
@@ -55,6 +57,7 @@ async function startGame(room: GameRoom): Promise<void> {
     folded: false,
     handRank: 0,
     userId: user3.userId,
+    username: user3.username,
     bet: 0,
   };
   const player4: Player = {
@@ -63,6 +66,7 @@ async function startGame(room: GameRoom): Promise<void> {
     folded: false,
     handRank: 0,
     userId: user4.userId,
+    username: user4.username,
     bet: 0,
   };
   room.player1Id = undefined;

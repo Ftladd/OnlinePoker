@@ -11,6 +11,7 @@ type Player = {
   handRank: number;
   userId: string;
   bet: number;
+  username: string;
 };
 
 type DatabaseConstraintError = {
@@ -21,10 +22,8 @@ type DatabaseConstraintError = {
 
 // For room management
 type GameRoom = {
-  player1Id: string | undefined;
-  player2Id: string | undefined;
-  player3Id: string | undefined;
-  player4Id: string | undefined;
+  playerIds: string[];
+  currentTurnIndex: number;
 };
 
 // req body type for friend request

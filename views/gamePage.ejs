@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/socket.io/socket.io.js" defer></script>
+    <script src="/js/clientChat.js" defer></script>
+  </head>
+  <body class="chatBody">
+    <div class="gameUI">
+        <!-- Use ejs for all four player names -->
+        <div class:"player">
+            <h1><%= Player1.username %></h1>
+        </div>
+
+        <div>
+            <h1><%= Player2.username %></h1>   
+        </div>
+        
+        <div>
+            <h1><%= Player3.username %></h1>
+        </div>
+        
+        <div>
+            <h1><%= Player4.username %></h1>
+        </div>
+        <!-- Make the buttons and give them ids -->
+    </div>
+
+    <form id="transferForm" action="">
+      <label for="to">To:<input name="to" id="to" autocomplete="off" /></label>
+      <label for="amount">Amount:<input name="amount" id="amount" autocomplete="off" /></label>
+      <button>Transfer</button>
+    </form>
+
+    <ul id="messages"></ul>
+
+    <form id="chatForm" action="">
+      <input id="chatMessage" autocomplete="off" /><button>Send</button>
+    </form>
+    <div>
+      <a href="/play">Play Game!</a>
+    </div>
+  </body>
+</html>

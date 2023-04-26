@@ -4,11 +4,18 @@ interface ServerToClientEvents {
   enteredChat: (msg: string) => void;
   exitedChat: (msg: string) => void;
   chatMessage: (name: string, msg: string) => void;
-  recieveCoins: (from: string, amount: number, newBalance: number) => void;
+  addRaise: (from: string, amount: number) => void;
+  fold: (from: string) => void;
+  check: (from: string) => void;
+  joinGame: () => void;
+  startGame: () => void;
 }
 
 // This is used for the messages from a client to the server
 interface ClientToServerEvents {
   chatMessage: (msg: string) => void;
-  sendCoins: (to: string, amount: number) => void;
+  raise: (amount: number) => void;
+  fold: () => void;
+  check: () => void;
+  joinGame: () => void;
 }
