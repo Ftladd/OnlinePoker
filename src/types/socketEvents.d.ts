@@ -4,7 +4,7 @@ interface ServerToClientEvents {
   enteredChat: (msg: string) => void;
   exitedChat: (msg: string) => void;
   chatMessage: (name: string, msg: string) => void;
-  addRaise: (from: string, amount: number) => void;
+  addRaise: (from: string, amount: number, pot: number, stack: number) => void;
   fold: (from: string) => void;
   check: (from: string) => void;
   joinGame: () => void;

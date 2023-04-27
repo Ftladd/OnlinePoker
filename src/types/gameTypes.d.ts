@@ -23,7 +23,12 @@ type DatabaseConstraintError = {
 // For room management
 type GameRoom = {
   playerIds: string[];
+  playerUsernames: string[];
+  playerBankRolls: number[];
+  playerFoldStatus: boolean[];
   currentTurnIndex: number;
+  pot: number;
+  currentBet: number;
 };
 
 // req body type for friend request

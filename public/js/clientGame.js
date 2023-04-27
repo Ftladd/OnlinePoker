@@ -6,6 +6,9 @@ const raiseAmountInput = document.getElementById('raiseAmount');
 function raise() {
   const raiseAmountStr = raiseAmountInput.value;
   const raiseAmount = parseInt(raiseAmountStr, 10);
+  if (raiseAmount < 1) {
+    return;
+  }
   socket.emit('raise', raiseAmount);
 }
 raiseButton.addEventListener('click', raise);
