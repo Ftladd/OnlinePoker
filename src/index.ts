@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import './config';
 import 'express-async-errors';
 import express, { Express, Request, Response, NextFunction } from 'express';
@@ -22,6 +23,9 @@ import {
   acceptInvitationController,
   declineInvitationController,
 } from './controllers/UserController';
+import { connectedClients, connectedClientIds } from './models/SocketModel';
+import { room1 } from './models/RoomModel';
+import { startGame } from './models/GameModel';
 
 dotenv.config();
 const app: Express = express();
@@ -67,11 +71,11 @@ app.post('/api/invitation/:invitationId/accept', acceptInvitationController);
 
 app.post('/api/invitation/:invitationId/decline', declineInvitationController);
 
+// app.get('/game', renderGamePage);
+
 const server = app.listen(PORT, () => {
   console.log(`App is listening on port http://${ip.address()}:${PORT}`);
 });
-
-const connectedClients: Record<string, CustomWebSocket> = {};
 
 const socketServer = new Server<ClientToServerEvents, ServerToClientEvents, null, null>(server);
 
@@ -104,10 +108,11 @@ socketServer.on('connection', (socket) => {
   }
 
   const { authenticatedUser } = req.session;
-  const { username } = authenticatedUser;
+  const { username, userId } = authenticatedUser;
 
   console.log(`${username} has connected`);
   connectedClients[username] = socket;
+  connectedClientIds[userId] = socket;
 
   socket.on('disconnect', () => {
     delete connectedClients[username];
@@ -120,5 +125,63 @@ socketServer.on('connection', (socket) => {
   socket.on('chatMessage', (msg: string) => {
     console.log(`received a chatMessage event from the client: ${username}`);
     socketServer.emit('chatMessage', username, msg);
+  });
+});
+
+socketServer.on('connection', (socket) => {
+  const req = socket.request;
+
+  // We need this chunk of code so that socket.io
+  // will automatically reload the session data
+  // don't change this code
+  socket.use((__, next) => {
+    req.session.reload((err) => {
+      if (err) {
+        socket.disconnect();
+      } else {
+        next();
+      }
+    });
+  });
+
+  // This is just to make sure only logged in users
+  // are able to connect to a game
+  if (!req.session.isLoggedIn) {
+    console.log('An unauthenticated user attempted to connect.');
+    socket.disconnect();
+    return;
+  }
+
+  const { authenticatedUser } = req.session;
+  const { username, userId } = authenticatedUser;
+
+  socket.on('raise', (amount: number) => {
+    if (room1.playerIds[room1.currentTurnIndex] !== userId) {
+      return;
+    }
+    console.log(`received a raise event from the client: ${username}`);
+    socketServer.emit('addRaise', username, amount);
+    room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
+  });
+
+  socket.on('fold', () => {
+    console.log(`received a fold event from the client: ${username}`);
+    socketServer.emit('fold', username);
+  });
+
+  socket.on('check', () => {
+    console.log(`received a check event from the client: ${username}`);
+    socketServer.emit('check', username);
+  });
+  socket.on('joinGame', () => {
+    if (room1.playerIds.length < 4) {
+      room1.playerIds.push(authenticatedUser.userId);
+    }
+
+    if (room1.playerIds.length === 4) {
+      socket.emit('startGame');
+      room1.currentTurnIndex = 0;
+      startGame(room1);
+    }
   });
 });
