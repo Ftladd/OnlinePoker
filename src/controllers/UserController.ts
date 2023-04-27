@@ -23,7 +23,7 @@ async function registerUser(req: Request, res: Response): Promise<void> {
   const { username, email, password } = req.body as NewUserRequest;
   const { authenticatedUser } = req.session;
 
-  if (username === authenticatedUser.username) {
+  if (authenticatedUser && username === authenticatedUser.username) {
     res.sendStatus(404);
     return;
   }

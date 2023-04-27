@@ -1,14 +1,14 @@
-const betting = document.getElementById('bet');
-
 const socket = io();
 
-betting.addEventListener('submit', (e) => {
-  e.preventDefault();
+const raiseButton = document.getElementById('raiseButton');
+const raiseAmountInput = document.getElementById('raiseAmount');
 
-  const amount = parseInt(document.getElementById('amount').value, 10);
-
-  socket.emit('raise', amount);
-});
+function raise() {
+  const raiseAmountStr = raiseAmountInput.value;
+  const raiseAmount = parseInt(raiseAmountStr, 10);
+  socket.emit('raise', raiseAmount);
+}
+raiseButton.addEventListener('click', raise);
 
 socket.on('addRaise', (from, amount) => {
   const item = document.createElement('li');
@@ -17,12 +17,24 @@ socket.on('addRaise', (from, amount) => {
   window.scrollTo(0, document.body.scrollHeight);
 });
 
+const foldButton = document.getElementById('foldButton');
+function fold() {
+  socket.emit('fold');
+}
+foldButton.addEventListener('click', fold);
+
 socket.on('fold', (from) => {
   const item = document.createElement('li');
   item.classList.add('transferReceiveMessage');
   item.textContent = `${from} folded`;
   window.scrollTo(0, document.body.scrollHeight);
 });
+
+const checkButton = document.getElementById('checkButton');
+function check() {
+  socket.emit('check');
+}
+checkButton.addEventListener('click', check);
 
 socket.on('check', (from) => {
   const item = document.createElement('li');

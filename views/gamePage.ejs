@@ -6,6 +6,7 @@
 
     <script src="/socket.io/socket.io.js" defer></script>
     <script src="/js/clientChat.js" defer></script>
+    <script src="/js/clientGame.js" defer></script>
   </head>
   <body class="gamePage">
     <div class="gameUI">
@@ -31,18 +32,25 @@
         </div>
 
         <!-- Make the buttons and give them ids -->
-        <form id="raise" method="get" action="/raise">
-          <label for="raise">Amount: <input name="raise" id="raise" autocomplete="off" /></label>
-          <button>Raise</button>
-        </form>
+        <input id="raiseAmount" type="number" name="amount">
+        <button id="raiseButton">Raise</button>
 
-        <form id="fold" method="get" action="/fold">
-          <button>Fold</button>
-        </form>
+        <button id="foldButton">Fold</button>
 
-        <form id="call" method="get" action="/call">
-          <button>Check/Call</button>
-        </form>
-    </div>
+        <button id="checkButton">Check/Call</button>
+
+        <div class="chatBody">
+          <form id="transferForm" action="">
+            <label for="to">To:<input name="to" id="to" autocomplete="off" /></label>
+            <label for="amount">Amount:<input name="amount" id="amount" autocomplete="off" /></label>
+            <button>Transfer</button>
+          </form>
+
+          <ul id="messages"></ul>
+
+          <form id="chatForm" action="">
+            <input id="chatMessage" autocomplete="off" /><button>Send</button>
+          </form>
+        </div>
   </body>
 </html>

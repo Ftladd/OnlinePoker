@@ -9,6 +9,7 @@ interface ServerToClientEvents {
   check: (from: string) => void;
   joinGame: () => void;
   startGame: () => void;
+  dealCards: () => void;
 }
 
 // This is used for the messages from a client to the server
