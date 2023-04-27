@@ -28,10 +28,10 @@ function playMatch(player1: Player, player2: Player, player3: Player, player4: P
 }
 
 async function startGame(room: GameRoom): Promise<void> {
-  const user1 = await getUserById(room.player1Id);
-  const user2 = await getUserById(room.player2Id);
-  const user3 = await getUserById(room.player3Id);
-  const user4 = await getUserById(room.player4Id);
+  const user1 = await getUserById(room.playerIds[0]);
+  const user2 = await getUserById(room.playerIds[1]);
+  const user3 = await getUserById(room.playerIds[2]);
+  const user4 = await getUserById(room.playerIds[3]);
 
   const player1: Player = {
     balance: user1.stackSize,
@@ -69,11 +69,8 @@ async function startGame(room: GameRoom): Promise<void> {
     username: user4.username,
     bet: 0,
   };
-  room.player1Id = undefined;
-  room.player2Id = undefined;
-  room.player3Id = undefined;
-  room.player4Id = undefined;
-  playMatch(player1, player2, player3, player4);
+
+  // playMatch(player1, player2, player3, player4);
 }
 
 export { startGame };

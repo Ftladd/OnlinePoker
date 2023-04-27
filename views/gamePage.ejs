@@ -7,40 +7,42 @@
     <script src="/socket.io/socket.io.js" defer></script>
     <script src="/js/clientChat.js" defer></script>
   </head>
-  <body class="chatBody">
+  <body class="gamePage">
     <div class="gameUI">
         <!-- Use ejs for all four player names -->
         <div class:"player">
-            <h1><%= Player1.username %></h1>
+            <h1><%= player1.username %></h1>
+            <h2><%= player1.balance %></h2>
         </div>
 
-        <div>
-            <h1><%= Player2.username %></h1>   
+        <div class="player">
+            <h1><%= player2.username %></h1>
+            <h2><%= player2.balance %></h2>
         </div>
-        
-        <div>
-            <h1><%= Player3.username %></h1>
+
+        <div class="player">
+            <h1><%= player3.username %></h1>
+            <h2><%= player3.balance %></h2>
         </div>
-        
-        <div>
-            <h1><%= Player4.username %></h1>
+
+        <div class="player">
+            <h1><%= player4.username %></h1>
+            <h2><%= player4.balance %></h2>
         </div>
+
         <!-- Make the buttons and give them ids -->
-    </div>
+        <form id="raise" method="get" action="/raise">
+          <label for="raise">Amount: <input name="raise" id="raise" autocomplete="off" /></label>
+          <button>Raise</button>
+        </form>
 
-    <form id="transferForm" action="">
-      <label for="to">To:<input name="to" id="to" autocomplete="off" /></label>
-      <label for="amount">Amount:<input name="amount" id="amount" autocomplete="off" /></label>
-      <button>Transfer</button>
-    </form>
+        <form id="fold" method="get" action="/fold">
+          <button>Fold</button>
+        </form>
 
-    <ul id="messages"></ul>
-
-    <form id="chatForm" action="">
-      <input id="chatMessage" autocomplete="off" /><button>Send</button>
-    </form>
-    <div>
-      <a href="/play">Play Game!</a>
+        <form id="call" method="get" action="/call">
+          <button>Check/Call</button>
+        </form>
     </div>
   </body>
 </html>
