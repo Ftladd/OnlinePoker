@@ -70,6 +70,9 @@ async function startGame(room: GameRoom): Promise<void> {
     bet: 0,
   };
 
+  const players = [player1, player2, player3, player4];
+  dealCards(players);
+
   // playMatch(player1, player2, player3, player4);
 }
 
