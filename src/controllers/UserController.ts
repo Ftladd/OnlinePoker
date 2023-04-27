@@ -12,15 +12,19 @@ import {
   acceptFriendRequest,
   declineFriendRequest,
   createPrivateRoom,
+  getPrivateRoomByName,
   getPrivateRoomsByOwner,
+  deletePrivateRoom,
   createInvitation,
   acceptInvitation,
   declineInvitation,
 } from '../models/UserModel';
 import { parseDatabaseError } from '../utils/db-utils';
+import { sendEmail } from '../services/emailService';
 
 async function registerUser(req: Request, res: Response): Promise<void> {
   const { username, email, password } = req.body as NewUserRequest;
+  console.log(req.body);
   const { authenticatedUser } = req.session;
 
   if (authenticatedUser && username === authenticatedUser.username) {
@@ -123,20 +127,29 @@ async function updateUserUsername(req: Request, res: Response): Promise<void> {
 // friend request controller
 async function friendRequest(req: Request, res: Response): Promise<void> {
   // Get the authenticated user from the session
-  const user = req.session.authenticatedUser as User;
-  if (!user) {
+  const { authenticatedUser, isLoggedIn } = req.session;
+  if (!isLoggedIn) {
     // Return a 401 unauthorized status if the user is not authenticated
     res.status(401).send('Unauthorized');
     return;
   }
 
+  const { username } = authenticatedUser;
+
   // Get the necessary data from the request body
-  const { senderUsername, receiverUsername } = req.body as NewFriendRequest;
+  const { receiverUsername } = req.body as NewFriendRequest;
+  console.log(req.body);
+
+  if (username === receiverUsername) {
+    res.sendStatus(400);
+  }
 
   try {
     // Send the friend request
-    const friendRequests = await addFriendRequest(senderUsername, receiverUsername);
-
+    const friendRequests = await addFriendRequest(username, receiverUsername);
+    // console.log(friendRequests);
+    const user = await getUserByUsername(receiverUsername);
+    await sendEmail(user.email, 'Friend Request!', `You get friend request from ${username}`);
     // If the request was successfully created, send a 200 OK response with the friendRequestId
     res.status(200).json(friendRequests);
   } catch (err) {
@@ -217,6 +230,13 @@ async function createPrivateRoomController(req: Request, res: Response): Promise
   const { roomName } = req.body as PrivateRoomRequest;
 
   try {
+    // Check if a private room with the given name already exists
+    const existingPrivateRoom = await getPrivateRoomByName(roomName);
+    if (existingPrivateRoom) {
+      res.status(400).send('A private room with that name already exists');
+      return;
+    }
+
     const privateRoom = await createPrivateRoom(user, roomName);
     // res.status(200).json(privateRoom);
     console.log(privateRoom);
@@ -227,6 +247,7 @@ async function createPrivateRoomController(req: Request, res: Response): Promise
     res.status(500).json(databaseErrorMessage);
   }
 }
+
 // retrieves all the private rooms owned by a specific user,
 // identified by the authenticated user stored in the session.
 async function getPrivateRoomsByOwnerController(req: Request, res: Response): Promise<void> {
@@ -235,8 +256,42 @@ async function getPrivateRoomsByOwnerController(req: Request, res: Response): Pr
 
   try {
     const privateRooms = await getPrivateRoomsByOwner(user);
-    // Return the private rooms in the response
-    res.status(200).json(privateRooms);
+    // Return the private rooms
+    res.render('privateRoomOwner', { user, privateRooms });
+  } catch (err) {
+    console.error(err);
+    const databaseErrorMessage = parseDatabaseError(err as Error);
+    res.status(500).json(databaseErrorMessage);
+  }
+}
+// delete private room
+async function deletePrivateRoomController(req: Request, res: Response): Promise<void> {
+  const { authenticatedUser } = req.session;
+  const { userId } = authenticatedUser;
+  const user = await getUserById(userId);
+
+  const privateRoomName = req.params.roomName;
+
+  try {
+    // Check if the private room belongs to the authenticated user
+    const privateRoom = await getPrivateRoomByName(privateRoomName);
+    // console.log(`Owner: ${JSON.stringify(privateRoom.owner, null, 4)}`);
+    // console.log(`User.privateRooms: ${JSON.stringify(user.privateRooms, null, 4)}`);
+
+    if (!privateRoom) {
+      res.status(404).send('Private room not found');
+      return;
+    }
+
+    if (privateRoom.owner.userId !== user.userId) {
+      res.status(403).send('You do not own this room');
+      return;
+    }
+
+    await deletePrivateRoom(privateRoom.roomName);
+    console.log(privateRoomName);
+
+    res.redirect('/privateRoomsByOwner');
   } catch (err) {
     console.error(err);
     const databaseErrorMessage = parseDatabaseError(err as Error);
@@ -336,6 +391,7 @@ export {
   declineFriendRequestController,
   createPrivateRoomController,
   getPrivateRoomsByOwnerController,
+  deletePrivateRoomController,
   createInvitationController,
   acceptInvitationController,
   declineInvitationController,

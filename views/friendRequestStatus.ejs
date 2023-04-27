@@ -11,6 +11,9 @@
   <h1>Friend Request</h1>
   <% if (friendRequest.status === 'pending') { %>
     <p>You have a friend request from <%= friendRequest.senderUsername %>.</p>
+    <% if (notification) { %>
+      <p><%= notification.message %></p>
+    <% } %>
     <form method="POST" action="/api/friendRequest/<%= friendRequest.friendRequestId %>/accept">
       <input type="submit" value="Accept">
     </form>

@@ -19,15 +19,21 @@ import {
   declineFriendRequestController,
   createPrivateRoomController,
   getPrivateRoomsByOwnerController,
+  deletePrivateRoomController,
   createInvitationController,
   acceptInvitationController,
   declineInvitationController,
 } from './controllers/UserController';
+<<<<<<< HEAD
 import { connectedClients, connectedClientIds } from './models/SocketModel';
 import { room1 } from './models/RoomModel';
+=======
+import { validateCreatePrivateRoomBody } from './validators/authValidator';
+>>>>>>> 1390a09 (update)
 
 dotenv.config();
 const app: Express = express();
+app.set('view engine', 'ejs');
 const { PORT, COOKIE_SECRET } = process.env;
 
 const SQLiteStore = connectSqlite3(session);
@@ -60,9 +66,11 @@ app.post('/api/friendRequest/:friendRequestId/accept', acceptFriendRequestContro
 
 app.post('/api/friendRequest/:friendRequestId/decline', declineFriendRequestController);
 
-app.post('/api/privateRooms', createPrivateRoomController);
+app.post('/api/privateRooms', validateCreatePrivateRoomBody, createPrivateRoomController);
 
-app.get('/api/privateRoomsByOwner', getPrivateRoomsByOwnerController);
+app.get('/privateRoomsByOwner', getPrivateRoomsByOwnerController);
+
+app.post('/api/deletePrivateRooms/:roomName', deletePrivateRoomController);
 
 app.post('/api/invitations', createInvitationController);
 
