@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 import connectSqlite3 from 'connect-sqlite3';
 import { Server } from 'socket.io';
 // import { playMatch } from './controllers/game'; // for testing
-import { connectRandomRoom } from './controllers/GameController';
+import { connectRandomRoom, renderGamePage } from './controllers/GameController';
 import {
   registerUser,
   logIn,
@@ -19,16 +19,21 @@ import {
   declineFriendRequestController,
   createPrivateRoomController,
   getPrivateRoomsByOwnerController,
+  deletePrivateRoomController,
   createInvitationController,
   acceptInvitationController,
   declineInvitationController,
 } from './controllers/UserController';
+<<<<<<< HEAD
 import { connectedClients, connectedClientIds } from './models/SocketModel';
 import { room1 } from './models/RoomModel';
-import { startGame } from './models/GameModel';
+=======
+import { validateCreatePrivateRoomBody } from './validators/authValidator';
+>>>>>>> 1390a09 (update)
 
 dotenv.config();
 const app: Express = express();
+app.set('view engine', 'ejs');
 const { PORT, COOKIE_SECRET } = process.env;
 
 const SQLiteStore = connectSqlite3(session);
@@ -61,9 +66,11 @@ app.post('/api/friendRequest/:friendRequestId/accept', acceptFriendRequestContro
 
 app.post('/api/friendRequest/:friendRequestId/decline', declineFriendRequestController);
 
-app.post('/api/privateRooms', createPrivateRoomController);
+app.post('/api/privateRooms', validateCreatePrivateRoomBody, createPrivateRoomController);
 
-app.get('/api/privateRoomsByOwner', getPrivateRoomsByOwnerController);
+app.get('/privateRoomsByOwner', getPrivateRoomsByOwnerController);
+
+app.post('/api/deletePrivateRooms/:roomName', deletePrivateRoomController);
 
 app.post('/api/invitations', createInvitationController);
 
@@ -71,7 +78,7 @@ app.post('/api/invitation/:invitationId/accept', acceptInvitationController);
 
 app.post('/api/invitation/:invitationId/decline', declineInvitationController);
 
-// app.get('/game', renderGamePage);
+app.get('/game', renderGamePage);
 
 const server = app.listen(PORT, () => {
   console.log(`App is listening on port http://${ip.address()}:${PORT}`);
@@ -159,19 +166,54 @@ socketServer.on('connection', (socket) => {
     if (room1.playerIds[room1.currentTurnIndex] !== userId) {
       return;
     }
+    if (room1.playerFoldStatus[room1.currentTurnIndex] === true) {
+      return;
+    }
+    let betAmount = amount;
+    if (room1.playerBankRolls[room1.currentTurnIndex] < amount) {
+      betAmount = room1.playerBankRolls[room1.currentTurnIndex];
+    }
     console.log(`received a raise event from the client: ${username}`);
-    socketServer.emit('addRaise', username, amount);
+    room1.pot += betAmount;
+    if (betAmount > room1.currentBet) {
+      room1.currentBet = betAmount;
+    }
+    socketServer.emit(
+      'addRaise',
+      username,
+      amount,
+      room1.pot,
+      room1.playerBankRolls[room1.currentTurnIndex]
+    );
     room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
   });
 
   socket.on('fold', () => {
+    if (room1.playerIds[room1.currentTurnIndex] !== userId) {
+      return;
+    }
+    if (room1.playerFoldStatus[room1.currentTurnIndex] === true) {
+      return;
+    }
     console.log(`received a fold event from the client: ${username}`);
+    room1.playerFoldStatus[room1.currentTurnIndex] = true;
     socketServer.emit('fold', username);
+
+    room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
   });
 
   socket.on('check', () => {
+    if (room1.playerIds[room1.currentTurnIndex] !== userId) {
+      return;
+    }
+    if (room1.playerFoldStatus[room1.currentTurnIndex] === true) {
+      return;
+    }
     console.log(`received a check event from the client: ${username}`);
+    room1.pot += room1.currentBet;
     socketServer.emit('check', username);
+
+    room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
   });
   socket.on('joinGame', () => {
     if (room1.playerIds.length < 4) {
@@ -181,7 +223,6 @@ socketServer.on('connection', (socket) => {
     if (room1.playerIds.length === 4) {
       socket.emit('startGame');
       room1.currentTurnIndex = 0;
-      startGame(room1);
     }
   });
 });

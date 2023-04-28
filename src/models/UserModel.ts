@@ -3,11 +3,13 @@ import { User } from '../entities/User';
 import { FriendRequest } from '../entities/FriendRequest';
 import { PrivateRoom } from '../entities/PrivateRoom';
 import { Invitation } from '../entities/Invitation';
+import { Notification } from '../entities/Notification';
 
 const userRepository = AppDataSource.getRepository(User);
 const friendRequestRepository = AppDataSource.getRepository(FriendRequest);
 const privateRoomRepository = AppDataSource.getRepository(PrivateRoom);
 const invitationRepository = AppDataSource.getRepository(Invitation);
+const notificationRepository = AppDataSource.getRepository(Notification);
 
 async function allUserData(): Promise<User[]> {
   const allUsers = await userRepository.find();
@@ -39,8 +41,10 @@ async function getUserById(userId: string): Promise<User | null> {
       email: true,
       stackSize: true,
       verifiedEmail: true,
+      privateRooms: true,
     },
     where: { userId },
+    relations: ['privateRooms'],
   });
   return user;
 }
@@ -80,11 +84,6 @@ async function updateUsername(userId: string, newUsername: string): Promise<void
     .execute();
 }
 
-// async function getfriendRequestById(friendRequestId: string): Promise<FriendRequest | null> {
-//   const request = await friendRequestRepository.findOne({ where: { friendRequestId } });
-//   return request;
-// }
-
 async function addFriendRequest(
   senderUsername: string,
   receiverUsername: string
@@ -111,6 +110,13 @@ async function addFriendRequest(
   // Save the friend request to our database
   friendRequest = await friendRequestRepository.save(friendRequest);
 
+  // Create a new notification for the receiver
+  const message = `You have received a friend request from ${senderUsername}`;
+  const notification = new Notification();
+  notification.receiver = receiverUser;
+  notification.message = message;
+  await notificationRepository.save(notification);
+
   // Return the newly created friend request
   return friendRequest;
 }
@@ -130,6 +136,15 @@ async function acceptFriendRequest(friendRequestId: string): Promise<FriendReque
 
   // Save the updated friend request to the database
   await friendRequestRepository.save(friendRequest);
+
+  // Mark the notification as read
+  const notification = await notificationRepository.findOne({
+    where: { message: `${friendRequest.sender.username} has accepted your friend request` },
+  });
+  if (notification) {
+    notification.isRead = true;
+    await notificationRepository.save(notification);
+  }
 
   // Return the updated friend request
   return friendRequest;
@@ -151,22 +166,60 @@ async function declineFriendRequest(friendRequestId: string): Promise<FriendRequ
   // Save the updated friend request to the database
   await friendRequestRepository.save(friendRequest);
 
+  // Mark the notification as read
+  const notification = await notificationRepository.findOne({
+    where: { message: `${friendRequest.receiver.username} has declined your friend request` },
+  });
+  if (notification) {
+    notification.isRead = true;
+    await notificationRepository.save(notification);
+  }
+
   // Return the updated friend request
   return friendRequest;
 }
 
 // private room
-async function createPrivateRoom(owner: User, roomName: string): Promise<PrivateRoom> {
+async function createPrivateRoom(owner: User, roomName: string): Promise<PrivateRoom | null> {
+  const existingRoom = await privateRoomRepository.findOne({ where: { roomName } });
+  if (existingRoom) {
+    return null; // return null to indicate that the room was not created
+  }
+
   let privateRoom = new PrivateRoom();
   privateRoom.owner = owner;
   privateRoom.roomName = roomName;
   privateRoom = await privateRoomRepository.save(privateRoom);
+
   return privateRoom;
+}
+
+async function getPrivateRoomByName(roomName: string): Promise<PrivateRoom | null> {
+  const privateRoom = await privateRoomRepository.findOne({
+    where: { roomName },
+    relations: ['owner'],
+  });
+  return privateRoom || null;
 }
 
 async function getPrivateRoomsByOwner(owner: User): Promise<PrivateRoom[]> {
   const privateRooms = await privateRoomRepository.find({ where: { owner } });
+  // console.log('Retrieved private rooms:', privateRooms);
   return privateRooms;
+}
+
+async function deletePrivateRoom(roomName: string): Promise<boolean> {
+  // const privateRoom = await privateRoomRepository.findOne({ where: { roomName } });
+  // if (!privateRoom) {
+  //   return false;
+  // }
+  // await privateRoomRepository.delete(privateRoom);
+  await privateRoomRepository
+    .createQueryBuilder('privateRoom')
+    .delete()
+    .where('roomName = :roomName', { roomName })
+    .execute();
+  return true;
 }
 
 // invitation system
@@ -199,6 +252,12 @@ async function createInvitation(
       return null;
     }
     invitedUsers.push(invitedUser);
+
+    // Create a notification for the invited user
+    const notification = new Notification();
+    notification.receiver = invitedUser;
+    notification.message = `${senderUsername} has invited you to join the private room ${roomName}`;
+    await notificationRepository.save(notification);
   }
 
   // Create a new Invitation instance with a "pending" status
@@ -211,8 +270,6 @@ async function createInvitation(
 
   // Add the invited users to the invitation
   invitation.invitedUsers = invitedUsers;
-
-  // invitation.status = 'pending';
 
   // Save the invitation to the database
   invitation = await invitationRepository.save(invitation);
@@ -236,6 +293,12 @@ async function acceptInvitation(invitationId: string): Promise<Invitation | null
   // Save the updated invitation to the database
   await invitationRepository.save(invitation);
 
+  // Create a notification for the receiver of the invitation
+  const notification = new Notification();
+  notification.receiver = invitation.sender;
+  notification.message = `Your invitation to the private room "${invitation.privateRoom.roomName}" has been accepted.`;
+  await notificationRepository.save(notification);
+
   // Return the updated invitation
   return invitation;
 }
@@ -255,6 +318,16 @@ async function declineInvitation(invitationId: string): Promise<Invitation | nul
   // Save the updated invitation to the database
   await invitationRepository.save(invitation);
 
+  // Create a new notification for the sender of the invitation
+  const message = `Your invitation to join the private room "${invitation.privateRoom.roomName}" has been declined.`;
+  const notification = new Notification();
+  notification.receiver = invitation.sender;
+  notification.message = message;
+  notification.isRead = false;
+
+  // Save the notification to the database
+  await notificationRepository.save(notification);
+
   // Return the updated invitation
   return invitation;
 }
@@ -273,7 +346,9 @@ export {
   acceptFriendRequest,
   declineFriendRequest,
   createPrivateRoom,
+  getPrivateRoomByName,
   getPrivateRoomsByOwner,
+  deletePrivateRoom,
   createInvitation,
   acceptInvitation,
   declineInvitation,

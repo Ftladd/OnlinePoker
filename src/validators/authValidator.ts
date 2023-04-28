@@ -16,4 +16,10 @@ const loginSchema = Joi.object({
 });
 const validateLoginBody = makeValidator(loginSchema, 'body');
 
-export { validateNewUserBody, validateLoginBody };
+const createPrivateRoomSchema = Joi.object({
+  roomName: Joi.string().trim().alphanum().min(1).max(50).required(),
+});
+
+const validateCreatePrivateRoomBody = makeValidator(createPrivateRoomSchema, 'body');
+
+export { validateNewUserBody, validateLoginBody, validateCreatePrivateRoomBody };

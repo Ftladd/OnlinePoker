@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Relation, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Relation, OneToMany } from 'typeorm';
 import { User } from './User';
 import { Invitation } from './Invitation';
 
@@ -13,6 +13,6 @@ export class PrivateRoom {
   @ManyToOne(() => User, (user) => user.privateRooms)
   owner: Relation<User>;
 
-  @ManyToMany(() => Invitation, (invitation) => invitation.privateRoom)
-  invitations: Relation<Invitation>;
+  @OneToMany(() => Invitation, (invitation) => invitation.privateRoom, { cascade: ['remove'] })
+  invitations: Relation<Invitation>[];
 }

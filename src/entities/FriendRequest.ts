@@ -1,11 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Check, Column, ManyToOne, Relation } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Relation } from 'typeorm';
 import { User } from './User';
 
 @Entity()
-@Check(`"status" = 'pending' | "status" = 'accepted' | "status" = 'declined'`)
+// @Check(`"status" = 'pending' or "status" = 'accepted' | "status" = 'declined'`)
 export class FriendRequest {
   @PrimaryGeneratedColumn('uuid')
-  friendRequestId:string
+  friendRequestId: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   sender: Relation<User>;

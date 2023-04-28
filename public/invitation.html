@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create Invitation</title>
+    <title>Send Invitation</title>
   </head>
   <body>
-    <h1>Create Invitation</h1>
+    <h1>Send Invitation</h1>
     <form action="/api/invitations" method="POST">
       <label for="senderUsername">Sender Username:</label>
       <input type="text" id="senderUsername" name="senderUsername"><br><br>
@@ -18,7 +18,9 @@
       <label for="invitedUsernames">Invited Usernames:</label>
       <input type="text" id="invitedUsernames" name="invitedUsernames"><br><br>
 
-      <button type="submit">Create Invitation</button>
+      <button type="submit">Send Invitation</button>
     </form>
+    <div id="notification"></div>
+    <script src="/js/invitation.js" defer></script>
   </body>
 </html>

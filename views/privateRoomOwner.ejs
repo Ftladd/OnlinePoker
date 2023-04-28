@@ -4,13 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Private Rooms</title>
+  <title><%= user.username %> Private Rooms</title>
 </head>
 <body>
-  <h1>Private Rooms</h1>
+  <h1>Private Rooms created by <%= user.username %> </h1>
   <ul>
     <% for (let i = 0; i < privateRooms.length; i++) { %>
-      <li><%= privateRooms[i].roomName %></li>
+      <li>
+        <%= privateRooms[i].roomName %>
+        <form action="/api/deletePrivateRooms/<%= privateRooms[i].roomName %>" method="POST">
+          <input type="hidden" name="_method" value="DELETE">
+          <button type="submit">Delete</button>
+        </form>
+      </li>
     <% } %>
   </ul>
 </body>

@@ -1,17 +1,9 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Check,
-  Column,
-  ManyToOne,
-  ManyToMany,
-  Relation,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, Relation } from 'typeorm';
 import { User } from './User';
 import { PrivateRoom } from './PrivateRoom';
 
 @Entity()
-@Check(`"status" = 'pending' OR "status" = 'accepted' OR "status" = 'declined'`)
+// @Check(`"status" = 'pending' OR "status" = 'accepted' OR "status" = 'declined'`)
 export class Invitation {
   @PrimaryGeneratedColumn('uuid')
   invitationId: string;
