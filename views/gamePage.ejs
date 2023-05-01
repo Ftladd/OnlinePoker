@@ -11,19 +11,19 @@
     <div class="gameUI">
         <!-- Use ejs for all four player names -->
         <div class:"player">
-
+          <%= room1.playerUsernames[0] %>
         </div>
 
         <div class="player">
-
+          <%= room1.playerUsernames[1] %>
         </div>
 
         <div class="player">
-
+          <%= room1.playerUsernames[2] %>
         </div>
 
         <div class="player">
-
+          <%= room1.playerUsernames[3] %>
         </div>
 
         <!-- Make the buttons and give them ids -->
@@ -34,18 +34,6 @@
 
         <button id="checkButton">Check/Call</button>
 
-        <div class="chatBody">
-          <form id="transferForm" action="">
-            <label for="to">To:<input name="to" id="to" autocomplete="off" /></label>
-            <label for="amount">Amount:<input name="amount" id="amount" autocomplete="off" /></label>
-            <button>Transfer</button>
-          </form>
-
-          <ul id="messages"></ul>
-
-          <form id="chatForm" action="">
-            <input id="chatMessage" autocomplete="off" /><button>Send</button>
-          </form>
-        </div>
+        <ul id="addRaise"></ul>
   </body>
 </html>

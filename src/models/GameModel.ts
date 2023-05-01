@@ -71,7 +71,11 @@ async function startGame(room: GameRoom): Promise<void> {
   };
 
   const players = [player1, player2, player3, player4];
-  dealCards(players);
+  // eslint-disable-next-line guard-for-in
+  for (let i = 0; i < 4; i += 1) {
+    room.playerUsernames.push(players[i].username);
+    room.playerBankRolls.push(players[i].balance);
+  }
 
   // playMatch(player1, player2, player3, player4);
 }

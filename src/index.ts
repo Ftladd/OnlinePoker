@@ -8,6 +8,7 @@ import ip from 'ip';
 import dotenv from 'dotenv';
 import connectSqlite3 from 'connect-sqlite3';
 import { Server } from 'socket.io';
+import { startGame } from './models/GameModel';
 // import { playMatch } from './controllers/game'; // for testing
 import { connectRandomRoom, renderGamePage } from './controllers/GameController';
 import {
@@ -24,12 +25,9 @@ import {
   acceptInvitationController,
   declineInvitationController,
 } from './controllers/UserController';
-<<<<<<< HEAD
-import { connectedClients, connectedClientIds } from './models/SocketModel';
-import { room1 } from './models/RoomModel';
-=======
 import { validateCreatePrivateRoomBody } from './validators/authValidator';
->>>>>>> 1390a09 (update)
+import { room1 } from './models/RoomModel';
+import { connectedClientIds, connectedClients } from './models/SocketModel';
 
 dotenv.config();
 const app: Express = express();
@@ -174,6 +172,7 @@ socketServer.on('connection', (socket) => {
     // let betAmount = amount;
     if (room1.playerBankRolls[room1.currentTurnIndex] < amount) {
       // betAmount = room1.playerBankRolls[room1.currentTurnIndex];
+
       return;
     }
     console.log(`received a raise event from the client: ${username}`);
@@ -225,6 +224,7 @@ socketServer.on('connection', (socket) => {
 
     if (room1.playerIds.length === 4) {
       socket.emit('startGame');
+      startGame(room1);
       room1.currentTurnIndex = 0;
     }
   });

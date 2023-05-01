@@ -2,6 +2,7 @@ const socket = io();
 
 const raiseButton = document.getElementById('raiseButton');
 const raiseAmountInput = document.getElementById('raiseAmount');
+const raise = document.getElementById('raise');
 
 function raise() {
   const raiseAmountStr = raiseAmountInput.value;
@@ -13,11 +14,20 @@ function raise() {
 }
 raiseButton.addEventListener('click', raise);
 
-socket.on('addRaise', (from, amount) => {
+socket.on('addRaise', (from, amount, pot, stack) => {
+  console.log('event recieved');
   const item = document.createElement('li');
   item.classList.add('transferReceiveMessage');
   item.textContent = `${from} betted ${amount} chips.`;
   window.scrollTo(0, document.body.scrollHeight);
+});
+
+raiseButton.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (raise.value) {
+    socket.emit('raise', raise.value);
+    raise.value = '';
+  }
 });
 
 const foldButton = document.getElementById('foldButton');
