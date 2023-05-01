@@ -217,14 +217,15 @@ socketServer.on('connection', (socket) => {
 
     room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
   });
+
   socket.on('joinGame', () => {
     if (room1.playerIds.length < 4) {
       room1.playerIds.push(authenticatedUser.userId);
     }
 
     if (room1.playerIds.length === 4) {
-      socket.emit('startGame');
       startGame(room1);
+      socket.emit('startGame');
       room1.currentTurnIndex = 0;
     }
   });
