@@ -24,12 +24,9 @@ import {
   acceptInvitationController,
   declineInvitationController,
 } from './controllers/UserController';
-<<<<<<< HEAD
+import { validateCreatePrivateRoomBody } from './validators/authValidator';
 import { connectedClients, connectedClientIds } from './models/SocketModel';
 import { room1 } from './models/RoomModel';
-=======
-import { validateCreatePrivateRoomBody } from './validators/authValidator';
->>>>>>> 1390a09 (update)
 
 dotenv.config();
 const app: Express = express();
