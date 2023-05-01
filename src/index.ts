@@ -48,6 +48,8 @@ app.use(express.static('public', { extensions: ['html'] }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.set('view engine', 'ejs');
+
 app.post('/api/users', registerUser);
 app.post('/api/logIn', logIn);
 app.get('api/users', getAllUsers);
@@ -161,14 +163,15 @@ socketServer.on('connection', (socket) => {
     if (room1.playerFoldStatus[room1.currentTurnIndex] === true) {
       return;
     }
-    let betAmount = amount;
+    // let betAmount = amount;
     if (room1.playerBankRolls[room1.currentTurnIndex] < amount) {
-      betAmount = room1.playerBankRolls[room1.currentTurnIndex];
+      // betAmount = room1.playerBankRolls[room1.currentTurnIndex];
+      return;
     }
     console.log(`received a raise event from the client: ${username}`);
-    room1.pot += betAmount;
-    if (betAmount > room1.currentBet) {
-      room1.currentBet = betAmount;
+    room1.pot += amount;
+    if (amount > room1.currentBet) {
+      room1.currentBet = amount;
     }
     socketServer.emit(
       'addRaise',
