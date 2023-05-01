@@ -11,6 +11,9 @@
   <h1>Invitation</h1>
   <% if (invitation.status === 'pending') { %>
     <p>You have been invited to join <%= invitation.roomName %> by <%= invitation.senderUsername %>.</p>
+    <% if (notification) { %>
+      <p><%= notification.message %></p>
+    <% } %>
     <form method="POST" action="/api/invitation/<%= invitation.invitationId %>/accept">
       <input type="submit" value="Accept">
     </form>
