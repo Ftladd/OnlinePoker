@@ -1,16 +1,12 @@
 const form = document.querySelector('form');
 const notificationDiv = document.querySelector('#notification');
 const receiverUsernameInput = document.getElementById('receiverUsername');
-// const senderUsernameInput = document.getElementById('senderUsername');
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
 
   const receiverUsername = receiverUsernameInput.value;
-  // const senderUsername = senderUsernameInput.value;
-  // if (senderUsername === receiverUsername) {
-  //   notificationDiv.textContent = `You cannot send friend request to yourself`;
-  // }
+
   const requestBody = JSON.stringify({ receiverUsername });
 
   const response = await fetch('/api/friendRequest', {

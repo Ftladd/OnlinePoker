@@ -3,7 +3,6 @@ import { User } from './User';
 import { PrivateRoom } from './PrivateRoom';
 
 @Entity()
-// @Check(`"status" = 'pending' OR "status" = 'accepted' OR "status" = 'declined'`)
 export class Invitation {
   @PrimaryGeneratedColumn('uuid')
   invitationId: string;

@@ -7,11 +7,13 @@
   <title><%= user.username %> Private Rooms</title>
 </head>
 <body>
-  <h1>Private Rooms created by <%= user.username %> </h1>
+  <h1>Private room(s) created by <%= user.username %></h1>
   <ul>
     <% for (let i = 0; i < privateRooms.length; i++) { %>
       <li>
-        <%= privateRooms[i].roomName %>
+        <a href="/invitation">
+          <%= privateRooms[i].roomName %>
+        </a>
         <form action="/api/deletePrivateRooms/<%= privateRooms[i].roomName %>" method="POST">
           <input type="hidden" name="_method" value="DELETE">
           <button type="submit">Delete</button>

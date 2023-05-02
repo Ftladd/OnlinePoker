@@ -15,15 +15,12 @@ import {
   registerUser,
   logIn,
   getAllUsers,
+  getUserProfileData,
   friendRequest,
-  acceptFriendRequestController,
-  declineFriendRequestController,
   createPrivateRoomController,
   getPrivateRoomsByOwnerController,
   deletePrivateRoomController,
   createInvitationController,
-  acceptInvitationController,
-  declineInvitationController,
 } from './controllers/UserController';
 import { validateCreatePrivateRoomBody } from './validators/authValidator';
 import { room1 } from './models/RoomModel';
@@ -60,11 +57,9 @@ app.get('api/users', getAllUsers);
 
 app.post('/api/game/play', connectRandomRoom);
 
+app.get('/api/users/:userId', getUserProfileData);
+
 app.post('/api/friendRequest', friendRequest);
-
-app.post('/api/friendRequest/:friendRequestId/accept', acceptFriendRequestController);
-
-app.post('/api/friendRequest/:friendRequestId/decline', declineFriendRequestController);
 
 app.post('/api/privateRooms', validateCreatePrivateRoomBody, createPrivateRoomController);
 
@@ -73,10 +68,6 @@ app.get('/privateRoomsByOwner', getPrivateRoomsByOwnerController);
 app.post('/api/deletePrivateRooms/:roomName', deletePrivateRoomController);
 
 app.post('/api/invitations', createInvitationController);
-
-app.post('/api/invitation/:invitationId/accept', acceptInvitationController);
-
-app.post('/api/invitation/:invitationId/decline', declineInvitationController);
 
 app.get('/game', renderGamePage);
 
