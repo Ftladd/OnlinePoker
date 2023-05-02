@@ -7,11 +7,25 @@
     <script src="/socket.io/socket.io.js" defer></script>
     <script src="/js/clientGame.js" defer></script>
   </head>
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Card</title>
+    <script src="/card.js" defer></script>
+  </head>
+  <body>
+    <button id="addCard">Add Card</button>
+    <div id="cards"></div>
+  </body>
+
+  <h1><%= room1.pit</h1>
   <body class="gamePage">
     <div class="gameUI">
         <!-- Use ejs for all four player names -->
         <div class:"player">
-
+          
         </div>
 
         <div class="player">
@@ -35,17 +49,6 @@
         <button id="checkButton">Check/Call</button>
 
         <div class="chatBody">
-          <form id="transferForm" action="">
-            <label for="to">To:<input name="to" id="to" autocomplete="off" /></label>
-            <label for="amount">Amount:<input name="amount" id="amount" autocomplete="off" /></label>
-            <button>Transfer</button>
-          </form>
-
-          <ul id="messages"></ul>
-
-          <form id="chatForm" action="">
-            <input id="chatMessage" autocomplete="off" /><button>Send</button>
-          </form>
         </div>
   </body>
 </html>
