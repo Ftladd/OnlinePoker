@@ -14,11 +14,7 @@ function getRandomInt(min: number, max: number): number {
 //   return current;
 // }
 
-/* Happy with this function. It will generate a random integer and push the Card
- * at that index from the DECK array into the PlayerHand array. It will then
- * remove that same card from the deck array so that it cannot be "dealt" again.
- * If a player has chosen to fold at the most recent betting step they will not
- * be dealt a card. -Finn
+/* Deals 5 cards to a player upon joining game
  */
 function dealCards(username: string): void {
   const deal = getRandomInt(0, DECK.length);

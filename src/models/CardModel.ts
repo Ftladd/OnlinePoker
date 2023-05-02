@@ -2,66 +2,79 @@ const h2: Card = {
   suit: 'Heart',
   value: 2,
   rank: 13,
+  name: '2♥️',
 };
 const h3: Card = {
   suit: 'Heart',
   value: 3,
   rank: 12,
+  name: '3♥️',
 };
 const h4: Card = {
   suit: 'Heart',
   value: 4,
   rank: 11,
+  name: '4♥️',
 };
 const h5: Card = {
   suit: 'Heart',
   value: 5,
   rank: 10,
+  name: '5♥️',
 };
 const h6: Card = {
   suit: 'Heart',
   value: 6,
   rank: 9,
+  name: '6♥️',
 };
 const h7: Card = {
   suit: 'Heart',
   value: 7,
   rank: 8,
+  name: '7♥️',
 };
 const h8: Card = {
   suit: 'Heart',
   value: 8,
   rank: 7,
+  name: '8♥️',
 };
 const h9: Card = {
   suit: 'Heart',
   value: 9,
   rank: 6,
+  name: '9♥️',
 };
 const h10: Card = {
   suit: 'Heart',
   value: 10,
   rank: 5,
+  name: '10♥️',
 };
 const hJack: Card = {
   suit: 'Heart',
   value: 11,
   rank: 4,
+  name: 'Jack♥️',
 };
 const hQueen: Card = {
   suit: 'Heart',
   value: 12,
   rank: 3,
+  name: 'Queen♥️',
 };
 const hKing: Card = {
   suit: 'Heart',
   value: 13,
   rank: 2,
+  name: 'King♥️',
 };
 const hAce: Card = {
   suit: 'Heart',
   value: 1,
   rank: 1,
+  name: 'Ace♥️',
 };
 
 const s2: Card = {
@@ -147,66 +160,79 @@ const d2: Card = {
   suit: 'Diamond',
   value: 2,
   rank: 13,
+  name: '2♦️',
 };
 const d3: Card = {
   suit: 'Diamond',
   value: 3,
   rank: 12,
+  name: '3♦️',
 };
 const d4: Card = {
   suit: 'Diamond',
   value: 4,
   rank: 11,
+  name: '4♦️',
 };
 const d5: Card = {
   suit: 'Diamond',
   value: 5,
   rank: 10,
+  name: '5♦️',
 };
 const d6: Card = {
   suit: 'Diamond',
   value: 6,
   rank: 9,
+  name: '6♦️',
 };
 const d7: Card = {
   suit: 'Diamond',
   value: 7,
   rank: 8,
+  name: '7♦️',
 };
 const d8: Card = {
   suit: 'Diamond',
   value: 8,
   rank: 7,
+  name: '8♦️',
 };
 const d9: Card = {
   suit: 'Diamond',
   value: 9,
   rank: 6,
+  name: '9♦️',
 };
 const d10: Card = {
   suit: 'Diamond',
   value: 10,
   rank: 5,
+  name: '10♦️',
 };
 const dJack: Card = {
   suit: 'Diamond',
   value: 11,
   rank: 4,
+  name: 'Jack♦️',
 };
 const dQueen: Card = {
   suit: 'Diamond',
   value: 12,
   rank: 3,
+  name: 'Queen♦️',
 };
 const dKing: Card = {
   suit: 'Diamond',
   value: 13,
   rank: 2,
+  name: 'King♦️',
 };
 const dAce: Card = {
   suit: 'Diamond',
   value: 1,
   rank: 1,
+  name: 'Ace♦️',
 };
 
 const c2: Card = {
