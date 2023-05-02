@@ -29,6 +29,7 @@ type GameRoom = {
   currentTurnIndex: number;
   pot: number;
   currentBet: number;
+  playerHands: Array<Array<Card>>;
 };
 
 // req body type for friend request

@@ -1,4 +1,5 @@
 import { DECK } from './CardModel';
+import { room1 } from './RoomModel';
 
 const activePlayers: number = 4; // The number of players who have not folded
 let pot: number = 0; // The betting pool
@@ -19,11 +20,19 @@ function getRandomInt(min: number, max: number): number {
  * If a player has chosen to fold at the most recent betting step they will not
  * be dealt a card. -Finn
  */
-function dealCards(playerArray: Player[]): void {
-  for (let i = 0; i < playerArray.length; i += 1) {
-    if (!playerArray[i].folded) {
-      const deal = getRandomInt(0, DECK.length);
-      playerArray[i].hand.push(DECK[deal]);
+function dealCards(username: string): void {
+  const deal = getRandomInt(0, DECK.length);
+  for (let i = 0; i < room1.playerUsernames.length; i += 1) {
+    if (username === room1.playerUsernames[i]) {
+      room1.playerHands[i].push(DECK[deal]);
+      DECK.splice(deal, 1);
+      room1.playerHands[i].push(DECK[deal]);
+      DECK.splice(deal, 1);
+      room1.playerHands[i].push(DECK[deal]);
+      DECK.splice(deal, 1);
+      room1.playerHands[i].push(DECK[deal]);
+      DECK.splice(deal, 1);
+      room1.playerHands[i].push(DECK[deal]);
       DECK.splice(deal, 1);
     }
   }
