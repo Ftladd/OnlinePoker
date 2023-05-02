@@ -3,19 +3,23 @@ import { Request, Response } from 'express';
 // import { connectedClientIds } from '../models/SocketModel';
 import { room1 } from '../models/RoomModel';
 import { dealCards } from '../models/PokerModel';
+import { getUserById } from '../models/UserModel';
 
 function renderGamePage(req: Request, res: Response): void {
   res.render('gamePage', { room1 });
 }
 
-function connectRandomRoom(req: Request, res: Response): void {
+async function connectRandomRoom(req: Request, res: Response): Promise<void> {
   const { isLoggedIn, authenticatedUser } = req.session;
 
   if (!isLoggedIn || !authenticatedUser) {
     res.sendStatus(403); // forbidden
     return;
   }
+  const user = await getUserById(authenticatedUser.userId);
+  const money = user.stackSize;
   room1.playerUsernames.push(authenticatedUser.username);
+  room1.playerBankRolls.push(money);
   dealCards(authenticatedUser.username);
 
   res.redirect('/waitingRoom');

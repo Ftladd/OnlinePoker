@@ -17,17 +17,22 @@ function getRandomInt(min: number, max: number): number {
 /* Deals 5 cards to a player upon joining game
  */
 function dealCards(username: string): void {
-  const deal = getRandomInt(0, DECK.length);
+  let deal = getRandomInt(0, DECK.length);
   for (let i = 0; i < room1.playerUsernames.length; i += 1) {
     if (username === room1.playerUsernames[i]) {
+      deal = getRandomInt(0, DECK.length);
       room1.playerHands[i].push(DECK[deal]);
       DECK.splice(deal, 1);
+      deal = getRandomInt(0, DECK.length);
       room1.playerHands[i].push(DECK[deal]);
       DECK.splice(deal, 1);
+      deal = getRandomInt(0, DECK.length);
       room1.playerHands[i].push(DECK[deal]);
       DECK.splice(deal, 1);
+      deal = getRandomInt(0, DECK.length);
       room1.playerHands[i].push(DECK[deal]);
       DECK.splice(deal, 1);
+      deal = getRandomInt(0, DECK.length);
       room1.playerHands[i].push(DECK[deal]);
       DECK.splice(deal, 1);
     }

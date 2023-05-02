@@ -56,25 +56,25 @@ const hJack: Card = {
   suit: 'Heart',
   value: 11,
   rank: 4,
-  name: 'Jack♥️',
+  name: 'J♥️',
 };
 const hQueen: Card = {
   suit: 'Heart',
   value: 12,
   rank: 3,
-  name: 'Queen♥️',
+  name: 'Q♥️',
 };
 const hKing: Card = {
   suit: 'Heart',
   value: 13,
   rank: 2,
-  name: 'King♥️',
+  name: 'K♥️',
 };
 const hAce: Card = {
   suit: 'Heart',
   value: 1,
   rank: 1,
-  name: 'Ace♥️',
+  name: 'A♥️',
 };
 
 const s2: Card = {
@@ -214,25 +214,25 @@ const dJack: Card = {
   suit: 'Diamond',
   value: 11,
   rank: 4,
-  name: 'Jack♦️',
+  name: 'J♦️',
 };
 const dQueen: Card = {
   suit: 'Diamond',
   value: 12,
   rank: 3,
-  name: 'Queen♦️',
+  name: 'Q♦️',
 };
 const dKing: Card = {
   suit: 'Diamond',
   value: 13,
   rank: 2,
-  name: 'King♦️',
+  name: 'K♦️',
 };
 const dAce: Card = {
   suit: 'Diamond',
   value: 1,
   rank: 1,
-  name: 'Ace♦️',
+  name: 'A♦️',
 };
 
 const c2: Card = {
