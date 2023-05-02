@@ -230,6 +230,4 @@ socketServer.on('connection', (socket) => {
       room1.currentTurnIndex = 0;
     }
   });
-
-  socket.emit();
 });
