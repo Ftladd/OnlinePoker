@@ -15,7 +15,6 @@ function raise() {
 raiseButton.addEventListener('click', raise);
 
 socket.on('addRaise', (from, amount, pot, stack) => {
-  console.log('event recieved');
   const item = document.createElement('li');
   item.classList.add('transferReceiveMessage');
   item.textContent = `${from} betted ${amount} chips.`;
@@ -23,6 +22,13 @@ socket.on('addRaise', (from, amount, pot, stack) => {
   window.scrollTo(0, document.body.scrollHeight);
 });
 
+socket.on('currentTurn', (turnPlayer) => {
+  const item = document.createElement('li');
+  item.classList.add('transferReceiveMessage');
+  item.textContent = `It's ${turnPlayer}'s turn!'`;
+  gameMessages.appendChild(item);
+  window.scrollTo(0, document.body.scrollHeight);
+});
 raiseButton.addEventListener('submit', (e) => {
   e.preventDefault();
   if (raise.value) {

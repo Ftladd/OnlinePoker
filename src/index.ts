@@ -188,6 +188,7 @@ socketServer.on('connection', (socket) => {
       room1.playerBankRolls[room1.currentTurnIndex]
     );
     room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
+    socketServer.emit('currentTurn', room1.playerUsernames[room1.currentTurnIndex]);
   });
 
   socket.on('fold', () => {

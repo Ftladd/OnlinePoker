@@ -14,6 +14,7 @@ function connectRandomRoom(req: Request, res: Response): void {
     res.sendStatus(403); // forbidden
     return;
   }
+  room1.playerUsernames.push(authenticatedUser.username);
   res.redirect('/waitingRoom');
 }
 
