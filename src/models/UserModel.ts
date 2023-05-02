@@ -74,6 +74,16 @@ async function updateEmailAddress(userId: string, newEmail: string): Promise<voi
     .execute();
 }
 
+async function updateStackSize(userId: string, newStack: number): Promise<void> {
+  // TODO: Implement me!
+  await userRepository
+    .createQueryBuilder()
+    .update(User)
+    .set({ stackSize: newStack })
+    .where({ userId })
+    .execute();
+}
+
 async function updateUsername(userId: string, newUsername: string): Promise<void> {
   await userRepository
     .createQueryBuilder()
@@ -217,4 +227,5 @@ export {
   getPrivateRoomsByOwner,
   deletePrivateRoom,
   createInvitation,
+  updateStackSize,
 };

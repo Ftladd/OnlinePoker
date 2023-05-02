@@ -32,6 +32,7 @@ type GameRoom = {
   currentBet: number;
   playerHands: Array<Array<Card>>;
   lastBet: Array<number>;
+  endGame: Array<boolean>;
 };
 
 // req body type for friend request

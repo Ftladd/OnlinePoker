@@ -80,4 +80,4 @@ async function startGame(room: GameRoom): Promise<void> {
   // playMatch(player1, player2, player3, player4);
 }
 
-export { startGame, playMatch };
+export { startGame };

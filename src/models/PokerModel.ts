@@ -1,8 +1,8 @@
 import { DECK } from './CardModel';
 import { room1 } from './RoomModel';
 
-const activePlayers: number = 4; // The number of players who have not folded
-let pot: number = 0; // The betting pool
+// const activePlayers: number = 4; // The number of players who have not folded
+// const pot: number = 0; // The betting pool
 
 // This generates a random integer. Taken from the JavaScript documentation.
 function getRandomInt(min: number, max: number): number {
@@ -82,14 +82,14 @@ function placeBets(playerArray: Player[]): number {
  * that hasn't folded and adds it to the pot. It takes the current bet amount
  * as a parameter -Finn
  */
-function handleBets(bet: number, playerArray: Player[]): void {
-  pot += bet * activePlayers;
-  for (let i = 0; i < playerArray.length; i += 1) {
-    if (!playerArray[i].folded) {
-      playerArray[i].balance -= bet;
-    }
-  }
-}
+// function handleBets(bet: number, playerArray: Player[]): void {
+//   pot += bet * activePlayers;
+//   for (let i = 0; i < playerArray.length; i += 1) {
+//     if (!playerArray[i].folded) {
+//       playerArray[i].balance -= bet;
+//     }
+//   }
+// }
 
 // function to check the hand rank
 function checkHandRank(hand: Card[]): number {
@@ -215,7 +215,7 @@ function checkHandRank(hand: Card[]): number {
 }
 
 // function for determining winner
-function determineWinner(player_array: Array<Player>): number {
+function determineWinner(player_array: Array<Array<Card>>): number {
   // Initialize a variable to keep track of the highest hand rank found so far
   let maxRank = 0;
   // Initialize a variable to keep track of the index of the player with the highest hand rank
@@ -224,7 +224,7 @@ function determineWinner(player_array: Array<Player>): number {
   // Loop through each player
   for (let i = 0; i < player_array.length; i += 1) {
     // call checkHandRank to determine the rank of the player's hand
-    const rank = checkHandRank(player_array[i].hand);
+    const rank = checkHandRank(player_array[i]);
 
     // If the current player's rank is higher than the current max rank, update the max rank and winner index
     if (rank > maxRank) {
@@ -236,8 +236,8 @@ function determineWinner(player_array: Array<Player>): number {
       let j = 0;
       let winnerFound = false;
       while (!winnerFound) {
-        const player1Card = player_array[winnerIndex].hand[j];
-        const player2Card = player_array[i].hand[j];
+        const player1Card = player_array[winnerIndex][j];
+        const player2Card = player_array[i][j];
 
         // If player 2 has a higher card, update the winner index and break out of the loop
         if (player2Card.value > player1Card.value) {
@@ -254,7 +254,7 @@ function determineWinner(player_array: Array<Player>): number {
         }
 
         // If both players have the same cards, it's a tie
-        if (j >= player_array[winnerIndex].hand.length || j >= player_array[i].hand.length) {
+        if (j >= player_array[winnerIndex].length || j >= player_array[i].length) {
           winnerIndex = -1;
           winnerFound = true;
         }
@@ -274,63 +274,63 @@ function determineWinner(player_array: Array<Player>): number {
  * fold. The entire function seems very inefficient to me but I haven't been
  * able to think of a better way to do it. -Finn
  */
-function handleWinnings(playerArray: Player[]): void {
-  if (activePlayers > 1) {
-    const winner = determineWinner(playerArray);
-    if (winner === 0) {
-      playerArray[0].balance += pot;
-    } else if (winner === 1) {
-      playerArray[1].balance += pot;
-    } else if (winner === 2) {
-      playerArray[2].balance += pot;
-    } else if (winner === 3) {
-      playerArray[3].balance += pot;
-    } /* else if (winner === 'Player1&2') {
-      player1.balance += pot / 2;
-      player2.balance += pot / 2;
-    } else if (winner === 'Player1&3') {
-      player1.balance += pot / 2;
-      player3.balance += pot / 2;
-    } else if (winner === 'Player1&4') {
-      player1.balance += pot / 2;
-      player4.balance += pot / 2;
-    } else if (winner === 'Player2&3') {
-      player2.balance += pot / 2;
-      player3.balance += pot / 2;
-    } else if (winner === 'Player2&4') {
-      player2.balance += pot / 2;
-      player4.balance += pot / 2;
-    } else if (winner === 'Player3&4') {
-      player3.balance += pot / 2;
-      player4.balance += pot / 2;
-    } else if (winner === 'Player1&2&3') {
-      player1.balance += pot / 3;
-      player2.balance += pot / 3;
-      player3.balance += pot / 3;
-    } else if (winner === 'Player1&2&4') {
-      player1.balance += pot / 3;
-      player2.balance += pot / 3;
-      player4.balance += pot / 3;
-    } else if (winner === 'Player 1&3&4') {
-      player1.balance += pot / 3;
-      player3.balance += pot / 3;
-      player4.balance += pot / 3;
-    } else if (winner === 'Player2&3&4') {
-      player2.balance += pot / 3;
-      player3.balance += pot / 3;
-      player4.balance += pot / 3;
-    } */ else {
-      for (let i = 0; i < playerArray.length; i += 1) {
-        playerArray[i].balance += pot / 4;
-      }
-    }
-  } else {
-    for (let i = 0; i < playerArray.length; i += 1) {
-      playerArray[i].balance += pot / 4;
-    }
-  }
-  pot = 0;
-}
+// function handleWinnings(playerArray: Player[]): void {
+//   if (activePlayers > 1) {
+//     const winner = determineWinner(playerArray);
+//     if (winner === 0) {
+//       playerArray[0].balance += pot;
+//     } else if (winner === 1) {
+//       playerArray[1].balance += pot;
+//     } else if (winner === 2) {
+//       playerArray[2].balance += pot;
+//     } else if (winner === 3) {
+//       playerArray[3].balance += pot;
+//     } /* else if (winner === 'Player1&2') {
+//       player1.balance += pot / 2;
+//       player2.balance += pot / 2;
+//     } else if (winner === 'Player1&3') {
+//       player1.balance += pot / 2;
+//       player3.balance += pot / 2;
+//     } else if (winner === 'Player1&4') {
+//       player1.balance += pot / 2;
+//       player4.balance += pot / 2;
+//     } else if (winner === 'Player2&3') {
+//       player2.balance += pot / 2;
+//       player3.balance += pot / 2;
+//     } else if (winner === 'Player2&4') {
+//       player2.balance += pot / 2;
+//       player4.balance += pot / 2;
+//     } else if (winner === 'Player3&4') {
+//       player3.balance += pot / 2;
+//       player4.balance += pot / 2;
+//     } else if (winner === 'Player1&2&3') {
+//       player1.balance += pot / 3;
+//       player2.balance += pot / 3;
+//       player3.balance += pot / 3;
+//     } else if (winner === 'Player1&2&4') {
+//       player1.balance += pot / 3;
+//       player2.balance += pot / 3;
+//       player4.balance += pot / 3;
+//     } else if (winner === 'Player 1&3&4') {
+//       player1.balance += pot / 3;
+//       player3.balance += pot / 3;
+//       player4.balance += pot / 3;
+//     } else if (winner === 'Player2&3&4') {
+//       player2.balance += pot / 3;
+//       player3.balance += pot / 3;
+//       player4.balance += pot / 3;
+//     } */ else {
+//       for (let i = 0; i < playerArray.length; i += 1) {
+//         playerArray[i].balance += pot / 4;
+//       }
+//     }
+//   } else {
+//     for (let i = 0; i < playerArray.length; i += 1) {
+//       playerArray[i].balance += pot / 4;
+//     }
+//   }
+//   pot = 0;
+// }
 
 function resetDeck(
   hand1: Array<Card>,
@@ -360,4 +360,12 @@ function resetDeck(
   }
 }
 
-export { resetDeck, handleBets, handleWinnings, dealCards, placeBets };
+export {
+  resetDeck,
+  // handleBets,
+  // handleWinnings,
+  dealCards,
+  placeBets,
+  checkHandRank,
+  determineWinner,
+};

@@ -25,6 +25,8 @@ import {
 import { validateCreatePrivateRoomBody } from './validators/authValidator';
 import { room1 } from './models/RoomModel';
 import { connectedClientIds, connectedClients } from './models/SocketModel';
+import { determineWinner } from './models/PokerModel';
+import { updateStackSize } from './models/UserModel';
 
 dotenv.config();
 const app: Express = express();
@@ -158,6 +160,7 @@ socketServer.on('connection', (socket) => {
       return;
     }
     if (room1.playerFoldStatus[room1.currentTurnIndex] === true) {
+      room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
       return;
     }
     // let betAmount = amount;
@@ -166,6 +169,10 @@ socketServer.on('connection', (socket) => {
 
       return;
     }
+    if (amount <= room1.currentBet) {
+      return;
+    }
+
     console.log(`received a raise event from the client: ${username}`);
     room1.pot += amount;
     room1.playerBankRolls[room1.currentTurnIndex] -= amount;
@@ -180,6 +187,7 @@ socketServer.on('connection', (socket) => {
       room1.pot,
       room1.playerBankRolls[room1.currentTurnIndex]
     );
+    room1.endGame[room1.currentTurnIndex] = false;
     room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
     socketServer.emit('currentTurn', room1.playerUsernames[room1.currentTurnIndex]);
   });
@@ -189,12 +197,13 @@ socketServer.on('connection', (socket) => {
       return;
     }
     if (room1.playerFoldStatus[room1.currentTurnIndex] === true) {
+      room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
       return;
     }
     console.log(`received a fold event from the client: ${username}`);
     room1.playerFoldStatus[room1.currentTurnIndex] = true;
     socketServer.emit('fold', username);
-
+    room1.endGame[room1.currentTurnIndex] = true;
     room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
   });
 
@@ -203,6 +212,7 @@ socketServer.on('connection', (socket) => {
       return;
     }
     if (room1.playerFoldStatus[room1.currentTurnIndex] === true) {
+      room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
       return;
     }
     console.log(`received a check event from the client: ${username}`);
@@ -210,8 +220,16 @@ socketServer.on('connection', (socket) => {
     room1.playerBankRolls[room1.currentTurnIndex] -=
       room1.currentBet - room1.lastBet[room1.currentTurnIndex];
     socketServer.emit('check', username);
-
+    room1.endGame[room1.currentTurnIndex] = true;
     room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
+    if (
+      room1.endGame[0] === true &&
+      room1.endGame[1] === true &&
+      room1.endGame[2] === true &&
+      room1.endGame[3] === true
+    ) {
+      socket.emit('endGameCheck');
+    }
   });
 
   socket.on('joinGame', () => {
@@ -223,6 +241,27 @@ socketServer.on('connection', (socket) => {
       startGame(room1);
       socket.emit('startGame');
       room1.currentTurnIndex = 0;
+    }
+  });
+
+  socket.on('endGame', async () => {
+    const index = determineWinner(room1.playerHands);
+    if (index === 0) {
+      room1.playerBankRolls[0] += room1.pot;
+    } else if (index === 1) {
+      room1.playerBankRolls[1] += room1.pot;
+    } else if (index === 2) {
+      room1.playerBankRolls[2] += room1.pot;
+    } else if (index === 3) {
+      room1.playerBankRolls[3] += room1.pot;
+    } else {
+      for (let i = 0; i < room1.playerBankRolls.length; i += 1) {
+        room1.playerBankRolls[i] += room1.pot / 4;
+      }
+    }
+
+    for (let i = 0; i < room1.playerIds.length; i += 1) {
+      await updateStackSize(room1.playerIds[i], room1.playerBankRolls[i]);
     }
   });
 });

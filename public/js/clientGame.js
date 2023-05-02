@@ -40,6 +40,7 @@ socket.on('fold', (from) => {
   const item = document.createElement('li');
   item.classList.add('transferReceiveMessage');
   item.textContent = `${from} folded`;
+  gameMessages.appendChild(item);
   window.scrollTo(0, document.body.scrollHeight);
 });
 
@@ -53,5 +54,10 @@ socket.on('check', (from) => {
   const item = document.createElement('li');
   item.classList.add('transferReceiveMessage');
   item.textContent = `${from} checked`;
+  gameMessages.appendChild(item);
   window.scrollTo(0, document.body.scrollHeight);
+});
+
+socket.on('endGameCheck', () => {
+  socket.emit('endGame');
 });

@@ -10,6 +10,7 @@ interface ServerToClientEvents {
   joinGame: () => void;
   startGame: () => void;
   currentTurn: (turnPlayer: string) => void;
+  endGameCheck: () => void;
 }
 
 // This is used for the messages from a client to the server
@@ -19,4 +20,5 @@ interface ClientToServerEvents {
   fold: () => void;
   check: () => void;
   joinGame: () => void;
+  endGame: () => void;
 }
