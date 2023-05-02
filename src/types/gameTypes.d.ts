@@ -2,6 +2,7 @@ type Card = {
   suit: string;
   value: number;
   rank: number;
+  name: string;
 };
 
 type Player = {

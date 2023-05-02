@@ -21,8 +21,6 @@ function addCard() {
   cardsContainer.appendChild(card);
 }
 
-for (let i = 0; i < 20; i += 1) {
-  addCard();
-}
+socket.on();
 
 addCardBtn.addEventListener('click', addCard);
