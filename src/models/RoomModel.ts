@@ -6,6 +6,7 @@ const room1: GameRoom = {
   currentTurnIndex: 0,
   pot: 0,
   currentBet: 0,
+  playerHands: [[], [], [], []],
 };
 // comment
 

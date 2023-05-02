@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 // import { parseDatabaseError } from '../utils/db-utils';
 // import { connectedClientIds } from '../models/SocketModel';
 import { room1 } from '../models/RoomModel';
+import { dealCards } from '../models/PokerModel';
 
 function renderGamePage(req: Request, res: Response): void {
   res.render('gamePage', { room1 });
@@ -15,6 +16,8 @@ function connectRandomRoom(req: Request, res: Response): void {
     return;
   }
   room1.playerUsernames.push(authenticatedUser.username);
+  dealCards(authenticatedUser.username);
+
   res.redirect('/waitingRoom');
 }
 
