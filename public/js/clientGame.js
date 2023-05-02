@@ -20,6 +20,14 @@ socket.on('addRaise', (from, amount) => {
   window.scrollTo(0, document.body.scrollHeight);
 });
 
+raiseButton.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (raiseAmountInput.value) {
+    socket.emit('raiseAmountInput', raiseAmountInput.value);
+    raiseAmountInput.value = '';
+  }
+});
+
 const foldButton = document.getElementById('foldButton');
 function fold() {
   socket.emit('fold');
