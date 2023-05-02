@@ -7,6 +7,7 @@ const room1: GameRoom = {
   pot: 0,
   currentBet: 0,
   playerHands: [[], [], [], []],
+  lastBet: [0, 0, 0, 0],
 };
 // comment
 

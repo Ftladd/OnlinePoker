@@ -177,6 +177,8 @@ socketServer.on('connection', (socket) => {
     }
     console.log(`received a raise event from the client: ${username}`);
     room1.pot += amount;
+    room1.playerBankRolls[room1.currentTurnIndex] -= amount;
+    room1.lastBet[room1.currentTurnIndex] = amount;
     if (amount > room1.currentBet) {
       room1.currentBet = amount;
     }
@@ -213,7 +215,9 @@ socketServer.on('connection', (socket) => {
       return;
     }
     console.log(`received a check event from the client: ${username}`);
-    room1.pot += room1.currentBet;
+    room1.pot += room1.currentBet - room1.lastBet[room1.currentTurnIndex];
+    room1.playerBankRolls[room1.currentTurnIndex] -=
+      room1.currentBet - room1.lastBet[room1.currentTurnIndex];
     socketServer.emit('check', username);
 
     room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
