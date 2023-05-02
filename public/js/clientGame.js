@@ -2,7 +2,7 @@ const socket = io();
 
 const raiseButton = document.getElementById('raiseButton');
 const raiseAmountInput = document.getElementById('raiseAmount');
-const raise = document.getElementById('raise');
+const gameMessages = document.getElementById('gameMessages');
 
 function raise() {
   const raiseAmountStr = raiseAmountInput.value;
@@ -19,6 +19,7 @@ socket.on('addRaise', (from, amount, pot, stack) => {
   const item = document.createElement('li');
   item.classList.add('transferReceiveMessage');
   item.textContent = `${from} betted ${amount} chips.`;
+  gameMessages.appendChild(item);
   window.scrollTo(0, document.body.scrollHeight);
 });
 
