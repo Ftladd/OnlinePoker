@@ -29,13 +29,6 @@ socket.on('currentTurn', (turnPlayer) => {
   gameMessages.appendChild(item);
   window.scrollTo(0, document.body.scrollHeight);
 });
-raiseButton.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (raise.value) {
-    socket.emit('raise', raise.value);
-    raise.value = '';
-  }
-});
 
 const foldButton = document.getElementById('foldButton');
 function fold() {
