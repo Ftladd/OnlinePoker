@@ -1,14 +1,10 @@
 import { Request, Response } from 'express';
 // import { parseDatabaseError } from '../utils/db-utils';
-import { startGame } from '../models/GameModel';
 // import { connectedClientIds } from '../models/SocketModel';
 import { room1 } from '../models/RoomModel';
 
 function renderGamePage(req: Request, res: Response): void {
-  const { authenticatedUser } = req.session;
-  const { username } = authenticatedUser;
-  const userInfo = [username];
-  res.render('gamePage', userInfo);
+  res.render('gamePage', { room1 });
 }
 
 function connectRandomRoom(req: Request, res: Response): void {
@@ -31,4 +27,4 @@ function connectRandomRoom(req: Request, res: Response): void {
 //   startGame(room1);
 // }
 
-export { connectRandomRoom, startGame, renderGamePage };
+export { connectRandomRoom, renderGamePage };

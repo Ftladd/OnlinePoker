@@ -16,6 +16,7 @@ bs.init({
   reloadOnRestart: true,
   ui: false,
   logLevel: 'silent',
+  ghostMode: false,
 });
 
 const uiPort = bs.getOption('port');

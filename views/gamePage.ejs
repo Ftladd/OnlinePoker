@@ -25,19 +25,19 @@
     <div class="gameUI">
         <!-- Use ejs for all four player names -->
         <div class:"player">
-          
+                    <%= room1.playerIds[0] %>
         </div>
 
         <div class="player">
-
+          <%= room1.playerIds[1] %>
         </div>
 
         <div class="player">
-
+          <%= room1.playerIds[2] %>
         </div>
 
         <div class="player">
-
+          <%= room1.playerIds[3] %>
         </div>
 
         <!-- Make the buttons and give them ids -->
@@ -48,7 +48,6 @@
 
         <button id="checkButton">Check/Call</button>
 
-        <div class="chatBody">
-        </div>
+        <ul id="addRaise"></ul>
   </body>
 </html>

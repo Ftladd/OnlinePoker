@@ -8,6 +8,7 @@ import ip from 'ip';
 import dotenv from 'dotenv';
 import connectSqlite3 from 'connect-sqlite3';
 import { Server } from 'socket.io';
+import { startGame } from './models/GameModel';
 // import { playMatch } from './controllers/game'; // for testing
 import { connectRandomRoom, renderGamePage } from './controllers/GameController';
 import {
@@ -25,8 +26,8 @@ import {
   declineInvitationController,
 } from './controllers/UserController';
 import { validateCreatePrivateRoomBody } from './validators/authValidator';
-import { connectedClients, connectedClientIds } from './models/SocketModel';
 import { room1 } from './models/RoomModel';
+import { connectedClientIds, connectedClients } from './models/SocketModel';
 
 dotenv.config();
 const app: Express = express();
@@ -171,6 +172,7 @@ socketServer.on('connection', (socket) => {
     // let betAmount = amount;
     if (room1.playerBankRolls[room1.currentTurnIndex] < amount) {
       // betAmount = room1.playerBankRolls[room1.currentTurnIndex];
+
       return;
     }
     console.log(`received a raise event from the client: ${username}`);
@@ -215,12 +217,14 @@ socketServer.on('connection', (socket) => {
 
     room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
   });
+
   socket.on('joinGame', () => {
     if (room1.playerIds.length < 4) {
       room1.playerIds.push(authenticatedUser.userId);
     }
 
     if (room1.playerIds.length === 4) {
+      startGame(room1);
       socket.emit('startGame');
       room1.currentTurnIndex = 0;
     }
