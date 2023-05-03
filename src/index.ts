@@ -239,7 +239,7 @@ socketServer.on('connection', (socket) => {
 
     if (room1.playerIds.length === 4) {
       startGame(room1);
-      socket.emit('startGame');
+      socketServer.emit('startGame');
       room1.currentTurnIndex = 0;
     }
   });
