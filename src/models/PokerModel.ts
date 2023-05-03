@@ -215,7 +215,7 @@ function checkHandRank(hand: Card[]): number {
 }
 
 // function for determining winner
-function determineWinner(player_array: Array<Array<Card>>): number {
+function determineWinner(player_array: Array<Array<Card>>, status: Array<boolean>): number {
   // Initialize a variable to keep track of the highest hand rank found so far
   let maxRank = 0;
   // Initialize a variable to keep track of the index of the player with the highest hand rank
@@ -223,40 +223,42 @@ function determineWinner(player_array: Array<Array<Card>>): number {
 
   // Loop through each player
   for (let i = 0; i < player_array.length; i += 1) {
-    // call checkHandRank to determine the rank of the player's hand
-    const rank = checkHandRank(player_array[i]);
+    if (status[i] === false) {
+      // call checkHandRank to determine the rank of the player's hand
+      const rank = checkHandRank(player_array[i]);
 
-    // If the current player's rank is higher than the current max rank, update the max rank and winner index
-    if (rank > maxRank) {
-      maxRank = rank;
-      winnerIndex = i;
-    }
-    // If there is a tie, compare the next highest ranking card in each hand
-    else if (rank === maxRank) {
-      let j = 0;
-      let winnerFound = false;
-      while (!winnerFound) {
-        const player1Card = player_array[winnerIndex][j];
-        const player2Card = player_array[i][j];
+      // If the current player's rank is higher than the current max rank, update the max rank and winner index
+      if (rank > maxRank) {
+        maxRank = rank;
+        winnerIndex = i;
+      }
+      // If there is a tie, compare the next highest ranking card in each hand
+      else if (rank === maxRank) {
+        let j = 0;
+        let winnerFound = false;
+        while (!winnerFound) {
+          const player1Card = player_array[winnerIndex][j];
+          const player2Card = player_array[i][j];
 
-        // If player 2 has a higher card, update the winner index and break out of the loop
-        if (player2Card.value > player1Card.value) {
-          winnerIndex = i;
-          winnerFound = true;
-        }
-        // If player 1 has a higher card, break out of the loop
-        else if (player1Card.value > player2Card.value) {
-          winnerFound = true;
-        }
-        // If the players have the same highest card, compare the next highest card
-        else {
-          j += 1;
-        }
+          // If player 2 has a higher card, update the winner index and break out of the loop
+          if (player2Card.value > player1Card.value) {
+            winnerIndex = i;
+            winnerFound = true;
+          }
+          // If player 1 has a higher card, break out of the loop
+          else if (player1Card.value > player2Card.value) {
+            winnerFound = true;
+          }
+          // If the players have the same highest card, compare the next highest card
+          else {
+            j += 1;
+          }
 
-        // If both players have the same cards, it's a tie
-        if (j >= player_array[winnerIndex].length || j >= player_array[i].length) {
-          winnerIndex = -1;
-          winnerFound = true;
+          // If both players have the same cards, it's a tie
+          if (j >= player_array[winnerIndex].length || j >= player_array[i].length) {
+            winnerIndex = -1;
+            winnerFound = true;
+          }
         }
       }
     }

@@ -3,6 +3,7 @@ const socket = io();
 const raiseButton = document.getElementById('raiseButton');
 const raiseAmountInput = document.getElementById('raiseAmount');
 const gameMessages = document.getElementById('gameMessages');
+// const potDisplay = document.getElementById('potDisplay');
 
 function raise() {
   const raiseAmountStr = raiseAmountInput.value;
@@ -14,11 +15,13 @@ function raise() {
 }
 raiseButton.addEventListener('click', raise);
 
-socket.on('addRaise', (from, amount, pot, stack) => {
+socket.on('addRaise', (from, amount, pot) => {
   const item = document.createElement('li');
   item.classList.add('transferReceiveMessage');
-  item.textContent = `${from} betted ${amount} chips.`;
+  item.textContent = `${from} betted ${amount} chips.\n Total Pot $${pot}`;
   gameMessages.appendChild(item);
+  // item.textContent = `Total Pot $${pot}`;
+  // potDisplay.appendChild(item);
   window.scrollTo(0, document.body.scrollHeight);
 });
 
@@ -50,14 +53,22 @@ function check() {
 }
 checkButton.addEventListener('click', check);
 
-socket.on('check', (from) => {
+socket.on('check', (from, pot) => {
   const item = document.createElement('li');
   item.classList.add('transferReceiveMessage');
-  item.textContent = `${from} checked`;
+  item.textContent = `${from} checked \n Total Pot $${pot}`;
   gameMessages.appendChild(item);
   window.scrollTo(0, document.body.scrollHeight);
 });
 
 socket.on('endGameCheck', () => {
   socket.emit('endGame');
+});
+
+socket.on('declareWinner', (from) => {
+  const item = document.createElement('li');
+  item.classList.add('transferReceiveMessage');
+  item.textContent = `${from} Won!!!!`;
+  gameMessages.appendChild(item);
+  window.scrollTo(0, document.body.scrollHeight);
 });

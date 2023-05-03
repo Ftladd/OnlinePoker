@@ -219,7 +219,7 @@ socketServer.on('connection', (socket) => {
     room1.pot += room1.currentBet - room1.lastBet[room1.currentTurnIndex];
     room1.playerBankRolls[room1.currentTurnIndex] -=
       room1.currentBet - room1.lastBet[room1.currentTurnIndex];
-    socketServer.emit('check', username);
+    socketServer.emit('check', username, room1.pot);
     room1.endGame[room1.currentTurnIndex] = true;
     room1.currentTurnIndex = (room1.currentTurnIndex + 1) % room1.playerIds.length;
     if (
@@ -245,7 +245,7 @@ socketServer.on('connection', (socket) => {
   });
 
   socket.on('endGame', async () => {
-    const index = determineWinner(room1.playerHands);
+    const index = determineWinner(room1.playerHands, room1.playerFoldStatus);
     if (index === 0) {
       room1.playerBankRolls[0] += room1.pot;
     } else if (index === 1) {
@@ -263,5 +263,7 @@ socketServer.on('connection', (socket) => {
     for (let i = 0; i < room1.playerIds.length; i += 1) {
       await updateStackSize(room1.playerIds[i], room1.playerBankRolls[i]);
     }
+
+    socketServer.emit('declareWinner', room1.playerUsernames[index]);
   });
 });

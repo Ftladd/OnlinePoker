@@ -6,7 +6,8 @@ import { dealCards } from '../models/PokerModel';
 import { getUserById } from '../models/UserModel';
 
 function renderGamePage(req: Request, res: Response): void {
-  res.render('gamePage', { room1 });
+  const { authenticatedUser } = req.session;
+  res.render('gamePage', { room1, authenticatedUser });
 }
 
 async function connectRandomRoom(req: Request, res: Response): Promise<void> {

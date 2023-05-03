@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Socket.IO chat</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/game.css">
 
     <script src="/socket.io/socket.io.js" defer></script>
     <script src="/js/clientGame.js" defer></script>
@@ -16,53 +16,61 @@
     <script src="/card.js" defer></script>
   </head>
 
-
-  <h1>Pot Size = <%= room1.pot %></h1>
+<!-- <center> -->
   <body class="gamePage">
+    <ol id="potDisplay" class="pot"></ol>
+    <ol id="gameMessages" class="pot"></ol>
     <div class="gameUI">
-      <ol id="gameMessages"></ol>
         <!-- Use ejs for all four player names -->
         <div class:"player">
           <%= room1.playerUsernames[0] %>   <%= room1.playerBankRolls[0] %>
           <ol>
-            <%= room1.playerHands[0][0].name %>
-            <%= room1.playerHands[0][1].name %>
-            <%= room1.playerHands[0][2].name %>
-            <%= room1.playerHands[0][3].name %>
-            <%= room1.playerHands[0][4].name %>
+            <% if (authenticatedUser.username === room1.playerUsernames[0]) { %>
+              <%= room1.playerHands[0][0].name %>
+              <%= room1.playerHands[0][1].name %>
+              <%= room1.playerHands[0][2].name %>
+              <%= room1.playerHands[0][3].name %>
+              <%= room1.playerHands[0][4].name %>
+            <% } %>
           </ol>
         </div>
 
         <div class="player">
           <%= room1.playerUsernames[1] %>   <%= room1.playerBankRolls[1] %>
           <ol>
-            <%= room1.playerHands[1][0].name %>
-            <%= room1.playerHands[1][1].name %>
-            <%= room1.playerHands[1][2].name %>
-            <%= room1.playerHands[1][3].name %>
-            <%= room1.playerHands[1][4].name %>
+            <% if (authenticatedUser.username === room1.playerUsernames[1]) { %>
+              <%= room1.playerHands[1][0].name %>
+              <%= room1.playerHands[1][1].name %>
+              <%= room1.playerHands[1][2].name %>
+              <%= room1.playerHands[1][3].name %>
+              <%= room1.playerHands[1][4].name %>
+            <% } %>
           </ol>
         </div>
 
         <div class="player">
           <%= room1.playerUsernames[2] %>   <%= room1.playerBankRolls[2] %>
           <ol>
-            <%= room1.playerHands[2][0].name %>
-            <%= room1.playerHands[2][1].name %>
-            <%= room1.playerHands[2][2].name %>
-            <%= room1.playerHands[2][3].name %>
-            <%= room1.playerHands[2][4].name %>
+            <% if (authenticatedUser.username === room1.playerUsernames[2]) { %>
+              <%= room1.playerHands[2][0].name %>
+              <%= room1.playerHands[2][1].name %>
+              <%= room1.playerHands[2][2].name %>
+              <%= room1.playerHands[2][3].name %>
+              <%= room1.playerHands[2][4].name %>
+            <% } %> 
           </ol>
         </div>
 
         <div class="player">
           <%= room1.playerUsernames[3] %>   <%= room1.playerBankRolls[3] %>
           <ol>
-            <%= room1.playerHands[3][0].name %>
-            <%= room1.playerHands[3][1].name %>
-            <%= room1.playerHands[3][2].name %>
-            <%= room1.playerHands[3][3].name %>
-            <%= room1.playerHands[3][4].name %>
+            <% if (authenticatedUser.username === room1.playerUsernames[3]) { %>
+              <%= room1.playerHands[3][0].name %>
+              <%= room1.playerHands[3][1].name %>
+              <%= room1.playerHands[3][2].name %>
+              <%= room1.playerHands[3][3].name %>
+              <%= room1.playerHands[3][4].name %>
+            <% } %>
           </ol>
         </div>
 
@@ -76,4 +84,5 @@
 
         <ul id="addRaise"></ul>
   </body>
+<!-- </center> -->
 </html>
